@@ -5,9 +5,9 @@
   "engines": {
     "node": "4.4.5"
   },
-  "main": "web.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node web.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express" : "^4.9.8"
