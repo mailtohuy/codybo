@@ -2,7 +2,7 @@ var cors = require('cors')
 var express = require('express')
 var server = express()
 
-server.use(cors)
+server.use(cors())
 server.set('PORT', (process.env.PORT || 5000));
 
 
