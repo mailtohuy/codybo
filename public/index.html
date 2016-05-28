@@ -15,9 +15,11 @@
 		<div class="container"> 
 			<table class="table"> 
 			<tr> 
+				<th>Type</th>
 				<th> Name </th>
-				<th> Sugar content </th> 
-				<th> Alcohol content </th> 
+				<th> Taste </th>
+				<th> Sugar content (g/l)</th> 
+				<th> Alcohol content (%)</th> 
 				<th> Price </th> 
 				<th> Quantity </th> 
 				<th> Sale ends on </th> 
@@ -25,8 +27,10 @@
 
 			{{#each item in model}} 
 				<tr> 
+					<td>{{item.secondary_category}}</td>
 					<td>{{item.name}}</td>  
-					<td>{{item.sugar_content}} ({{item.sugar_in_grams_per_liter}} g/l)</td> 
+					<td>{{item.sugar_content}} </td> 
+					<td>{{item.sugar_in_grams_per_liter}}</td> 
 					<td>{{item.alcohol_content}}</td> 
 					<td>{{item.price_in_cents}} (save  {{item.limited_time_offer_savings_in_cents}})</td> 
 					<td>{{item.quantity}}</td> <td>{{item.limited_time_offer_ends_on}}</td> 
