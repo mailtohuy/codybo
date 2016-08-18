@@ -13,7 +13,7 @@ server.use(bodyParser.json());
  *    POST: creates a new contact
  */
 
-server.get("/contacts", function(req, res) {
+server.get("/news/list", function(req, res) {
 	res.send('Hello World!');
 });
 
