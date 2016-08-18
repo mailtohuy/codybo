@@ -1,10 +1,22 @@
 var express = require('express')
+var bodyParser = require("body-parser");
 var server = express()
 
 server.set('PORT', (process.env.PORT || 5000));
 
 
-server.use(express.static('public'));
+server.use(express.static(__dirname + '/public'));
+server.use(bodyParser.json());
+
+/*  "/contacts"
+ *    GET: finds all contacts
+ *    POST: creates a new contact
+ */
+
+server.get("/contacts", function(req, res) {
+	res.send('Hello World!');
+});
+
 
 var port = server.get('PORT');
 server.listen(port, function() {
