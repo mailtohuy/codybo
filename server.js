@@ -17,6 +17,9 @@ server.get("/news/list", function(req, res) {
 	res.send('Hello World!');
 });
 
+server.get("/echo/:text", function(req, res) {
+	res.send(text);
+})
 
 var port = server.get('PORT');
 server.listen(port, function() {
