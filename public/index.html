@@ -11,7 +11,7 @@
 		<script src="https://cdn.jsdelivr.net/jquery/1.10.2/jquery.min.js"></script> 
 		<script type="text/javascript">     
 			navigator.geolocation.getCurrentPosition(function(position) {
-  				url = "https://lcboapi.com/stores?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
+  				url = "https://codybo.heroku.com/lcbo?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
   				document.getElementById("url").innerText = url;
   				$.getJSON(url).then(function(data) {
             		document.getElementById("geo").innerText = data;
