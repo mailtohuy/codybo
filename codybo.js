@@ -7,6 +7,24 @@ function getJSON(url) {
 	.then((html) => JSON.parse(html));
 }
 
+module.exports.getStoresNearby = function(lat, lon) {
+	var url = `https://lcboapi.com/stores?access_key=${apiKey}&lat=${lat}&lon=${lon}`;
+	return getJSON(url)
+	.then(function(json){
+
+		/* check for error from LCBO API */
+		if (json.status != 200) {
+			throw new Error(json.status);
+		}
+
+		return json.result;
+	})
+	.catch(function(err) {
+		console.error(err);
+		return [];
+	})
+}
+
 module.exports.getSalesAtStore = function (storeId) {
 	var url = `https://lcboapi.com/stores/${storeId}/products?access_key=${apiKey}&where=has_limited_time_offer&q=wine&per_page=100`;
 
