@@ -7,7 +7,14 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap-theme.min.css">
 	</head>
 	<body>
-		<script type="text/x-handlebars">     
+		
+		<div id="geo"> 
+
+		</div>   
+		</script>     
+		<script src="https://cdn.jsdelivr.net/jquery/1.10.2/jquery.min.js"></script> 
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
+		<script type="text/javascript">     
 			navigator.geolocation.getCurrentPosition(function(position) {
   				url = "lcboapi.com/stores?lat=" & position.coords.latitude & "&lon= " & position.coords.longitude);
   				var stores = $.getJSON(url).then(function(data) {
@@ -16,14 +23,6 @@
   				
 			});
 		</script>    
-		
-		<script type="text/x-handlebars" id="index">   
-		<div id="geo"> 
 
-		</div>   
-		</script>     
-		<script src="https://cdn.jsdelivr.net/jquery/1.10.2/jquery.min.js"></script> 
-		<script src="https://cdn.jsdelivr.net/handlebarsjs/1.1.2/handlebars.min.js"></script> 
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
 	</body>
 </html>
