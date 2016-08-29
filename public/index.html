@@ -12,9 +12,10 @@
 		<script type="text/javascript">     
 			navigator.geolocation.getCurrentPosition(function(position) {
   				url = "https://lcboapi.com/stores?lat=" & position.coords.latitude & "&lon=" & position.coords.longitude;
-  				$.getJSON(url).then(function(data) {
-            		document.getElementById("geo").innerText = url;
-        		});	
+  				document.getElementById("geo").innerText = url;
+  				// $.getJSON(url).then(function(data) {
+      //       		document.getElementById("geo").innerText = data;
+      //   		});	
 			});
 		</script>    
 
