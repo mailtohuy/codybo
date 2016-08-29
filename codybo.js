@@ -23,7 +23,7 @@ module.exports.getStoresNearby = function(lat, lon) {
 		console.error(err);
 		return [];
 	})
-}
+};
 
 module.exports.getSalesAtStore = function (storeId) {
 	var url = `https://lcboapi.com/stores/${storeId}/products?access_key=${apiKey}&where=has_limited_time_offer&q=wine&per_page=100`;
