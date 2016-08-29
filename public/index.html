@@ -14,7 +14,10 @@
   				url = "https://codybo.herokuapp.com/lcbo-nearby?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
   				document.getElementById("url").innerText = url;
   				$.getJSON(url).then(function(data) {
-            		document.getElementById("geo").innerText = data;
+  					data.forEach(function(store) {
+  						document.getElementById("geo").appendChild(document.createTextNode(store.tags));
+  					})
+            		
         		});	
 			});
 		</script>    
