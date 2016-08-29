@@ -8,7 +8,7 @@ function getJSON(url) {
 }
 
 module.exports.getStoresNearby = function(lat, lon) {
-	var url = `https://lcboapi.com/stores?access_key=${apiKey}&lat=${lat}&lon=${lon}`;
+	var url = `https://lcboapi.com/stores?access_key=${apiKey}&lat=${lat}&lon=${lon}&per_page=10`;
 	return getJSON(url)
 	.then(function(json){
 
