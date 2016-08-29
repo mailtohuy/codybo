@@ -15,7 +15,9 @@
   				document.getElementById("url").innerText = url;
   				$.getJSON(url).then(function(data) {
   					data.forEach(function(store) {
-  						document.getElementById("geo").appendChild(document.createTextNode(store.tags));
+  						var newP = document.createElement("p");
+  						newP.innerText = store.tags;
+  						document.getElementById("geo").appendChild(newP);
   					})
             		
         		});	
