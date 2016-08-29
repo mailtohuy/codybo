@@ -5,7 +5,9 @@
 		<title>cdbo</title>
 	</head>
 	<body>
-		<div id="url"> </div>
+		<p>10 stores nearest to your current position</p>
+		<img src="loading.gif" id="spin">
+		<div id="url" style="display: none;"> </div>
 		<div id="geo"> </div>   
 		</script>     
 		<script src="https://cdn.jsdelivr.net/jquery/1.10.2/jquery.min.js"></script> 
@@ -18,6 +20,7 @@
   						var newP = document.createElement("p");
   						newP.innerText = store.tags;
   						document.getElementById("geo").appendChild(newP);
+  						document.getElementById("spin").style.display = "none";
   					})
             		
         		});	
