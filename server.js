@@ -17,6 +17,11 @@ server.get("/lcbo/:storeId", function(req,res) {
 	lcbo.getSalesAtStore(req.params.storeId).then((json) => res.send(json));
 })
 
+server.get("/lcbo/nearby", function(req,res) {
+	res.send(req.params.lat);
+	// lcbo.getStoresNearby(req.params.lat,req.params.lon).then((json) => res.send(json));
+})
+
 var port = server.get('PORT');
 server.listen(port, function() {
 	console.log('codybo is running on port', port);
