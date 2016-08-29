@@ -3,24 +3,18 @@
 	<head>
 		<meta charset="utf-8">
 		<title>cdbo</title>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap-theme.min.css">
 	</head>
 	<body>
 		
-		<div id="geo"> 
-
-		</div>   
+		<div id="geo"> </div>   
 		</script>     
 		<script src="https://cdn.jsdelivr.net/jquery/1.10.2/jquery.min.js"></script> 
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
 		<script type="text/javascript">     
 			navigator.geolocation.getCurrentPosition(function(position) {
-  				url = "lcboapi.com/stores?lat=" & position.coords.latitude & "&lon= " & position.coords.longitude);
-  				var stores = $.getJSON(url).then(function(data) {
+  				url = "https://lcboapi.com/stores?lat=" & position.coords.latitude & "&lon=" & position.coords.longitude);
+  				$.getJSON(url).then(function(data) {
             		document.getElementById("geo").innerText = data;
-        		});
-  				
+        		});	
 			});
 		</script>    
 
