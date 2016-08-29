@@ -18,8 +18,8 @@ server.get("/lcbo/:storeId", function(req,res) {
 })
 
 server.get("/lcbo/nearby", function(req,res) {
-	res.send(req.params.lat);
-	// lcbo.getStoresNearby(req.params.lat,req.params.lon).then((json) => res.send(json));
+	res.send(req.query.lat);
+	// lcbo.getStoresNearby(req.query.lat,req.query.lon).then((json) => res.send(json));
 })
 
 var port = server.get('PORT');
