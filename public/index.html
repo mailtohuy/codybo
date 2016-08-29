@@ -5,17 +5,17 @@
 		<title>cdbo</title>
 	</head>
 	<body>
-		
+		<div id="url"> </div>
 		<div id="geo"> </div>   
 		</script>     
 		<script src="https://cdn.jsdelivr.net/jquery/1.10.2/jquery.min.js"></script> 
 		<script type="text/javascript">     
 			navigator.geolocation.getCurrentPosition(function(position) {
-  				url = "https://lcboapi.com/stores?lat=" & position.coords.latitude & "&lon=" & position.coords.longitude;
-  				document.getElementById("geo").innerText = url;
-  				// $.getJSON(url).then(function(data) {
-      //       		document.getElementById("geo").innerText = data;
-      //   		});	
+  				url = "https://lcboapi.com/stores?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
+  				document.getElementById("url").innerText = url;
+  				$.getJSON(url).then(function(data) {
+            		document.getElementById("geo").innerText = data;
+        		});	
 			});
 		</script>    
 
