@@ -40,7 +40,10 @@
 		<input type="submit" ng-click="storeCtlr.getStores()" class="btn-primary" value="Find">
 		<ul class="unstyled">
 			<li ng-repeat="store in storeCtlr.stores">
-				<span>{{store.name}}, {{store.address_line_1}}, {{store.city}}, {{store.postal_code}} </span>
+				<span>{{store.name}}</span>
+				<span>{{store.address_line_1}}</span>
+				<span>{{store.city}}</span>
+				<span>{{store.postal_code}}</span>
 			</li>
 		</ul>
 
