@@ -11,11 +11,12 @@
 			storeCtlr.address = "";
 			storeCtlr.stores = [];
 
-			this.getStores = function() {
+			storeCtlr.getStores = function() {
 				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
 				.then(function(data) {
-						storeCtlr.stores = JSON.parse(JSON.stringify(data));
-						console.log(data);
+						storeCtlr.stores = data; // auto-converted to JSON object
+				}, function(err) {
+					console.log('Error while loading getStores');
 				}); // then
 			};
 		}); // StoreController
