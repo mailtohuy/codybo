@@ -2,7 +2,6 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>cdbo</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 	<script type="text/javascript">
 		angular.module('myApp', [])
@@ -13,8 +12,8 @@
 
 			storeCtlr.getStores = function() {
 				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
-				.then(function(data) {
-						storeCtlr.stores = data; // auto-converted to JSON object
+				.then(function(res) {
+						storeCtlr.stores = res.data; // auto-converted to JSON object
 				}, function(err) {
 					console.log('Error while loading getStores');
 				}); // then
@@ -30,10 +29,12 @@
 		<ul>
 			<li ng-repeat="s in mc.stores">
  				<span>{{s.name}}</span>
-				<span>{{s.address_line_1}}</span>
+<!--
+ 				<span>{{s.address_line_1}}</span>
 				<span>{{s.city}}</span>
 				<span>{{s.postal_code}}</span>
- 			</li>
+ --> 			
+			</li>
 		</ul>
 
     </div>
