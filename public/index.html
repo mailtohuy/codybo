@@ -14,7 +14,7 @@
 			this.getStores = function() {
 				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
 				.then(function(data) {
-						storeCtlr.stores = JSON.parse(data);
+						storeCtlr.stores = JSON.parse(JSON.stringify(data));
 						console.log(data);
 				}); // then
 			};
