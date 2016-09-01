@@ -16,20 +16,18 @@
 				.then(
 					function(data) {
 						storeCtlr.stores = data;
-					}
-				);
+				}); // then
 			};
 		}); // StoreController
 	</script>
 
 </head>
 <body ng-app="myApp">
-	<div ng-controller="StoreController as storeCtlr">
-		<label>Address:</label>
-		<input type="text" ng-model="storeCtlr.address" placeholder="Enter address">
-		<input type="submit" ng-click="storeCtlr.getStores()" class="btn-primary" value="Find">
-		<ul class="unstyled">
-			<li ng-repeat="store in storeCtlr.stores">
+	<div ng-controller="StoreController as c">
+		<input type="text" ng-model="c.address" placeholder="Enter address">
+		<input type="submit" ng-click="c.getStores()" class="btn-primary" value="Submit">
+		<ul>
+			<li ng-repeat="store in c.stores">
 				<span>{{store.name}}</span>
 				<span>{{store.address_line_1}}</span>
 				<span>{{store.city}}</span>
