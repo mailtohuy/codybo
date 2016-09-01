@@ -10,6 +10,7 @@
 			storeCtlr.address = "";
 			storeCtlr.stores = []; // stores -> [{id:411, name, ...}, {id:123,...}]
 			storeCtlr.sales = {}; // sales -> {411 : [{productId,...}], 123: [...] }
+			storeCtlr.currentStore = 1;
 
 			storeCtlr.getStores = function() {
 				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
@@ -40,7 +41,7 @@
 		<ul>
 			<li ng-repeat="s in mc.stores">
 
- 				<button ng-click="mc.getSales({{s.id}})">Get sales</button>{{s.name}}: {{s.address_line_1}} | {{s.city}} | {{s.postal_code}}</span>
+ 				<button ng-click="mc.getSales(s.id)">{{s.name}}</button> {{s.address_line_1}} | {{s.city}} | {{s.postal_code}}</span>
 				<div id="sales_{{s.id}}">
 				</div>
 			</li>
