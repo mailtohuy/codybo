@@ -42,31 +42,29 @@
 			<li ng-repeat="s in mc.stores">
 
  				<button ng-click="mc.getSales(s.id)">{{s.name}}</button> {{s.address_line_1}}, {{s.city}}, {{s.postal_code}}</span>
-				<div id="sales_{{s.id}}">
+				<div id="sales_{{s.id}}" ng-hide="mc.sales[s.id] == undefined">
 					<table class="table table-hover table-striped"> 
-					<tr> 
-						<th>Type</th>
-						<th> Name </th>
-						<th> Taste </th>
-						<th> Sugar content (g/l)</th> 
-						<th> Alcohol content (%)</th> 
-						<th> Price </th> 
-						<th> Quantity </th> 
-						<th> Sale ends on </th> 
-					</tr>     
+						<tr> 
+							<th>Type</th>
+							<th> Name </th>
+							<th> Taste </th>
+							<th> Sugar content (g/l)</th> 
+							<th> Alcohol content (%)</th> 
+							<th> Price </th> 
+							<th> Quantity </th> 
+							<th> Sale ends on </th> 
+						</tr>     
 
-					<tr ng-repeat="item in mc.sales[s.id]"> 
-						<td>{{item.secondary_category}}</td>
-						<td>{{item.name}}</td>  
-						<td>{{item.sugar_content}} </td> 
-						<td>{{item.sugar_in_grams_per_liter}}</td> 
-						<td>{{item.alcohol_content}}</td> 
-						<td>{{item.price_in_cents}} (save  {{item.limited_time_offer_savings_in_cents}})</td> 
-						<td>{{item.quantity}}</td> <td>{{item.limited_time_offer_ends_on}}</td> 
-					</tr>     
-
+						<tr ng-repeat="item in mc.sales[s.id]"> 
+							<td>{{item.secondary_category}}</td>
+							<td>{{item.name}}</td>  
+							<td>{{item.sugar_content}} </td> 
+							<td>{{item.sugar_in_grams_per_liter}}</td> 
+							<td>{{item.alcohol_content}}</td> 
+							<td>{{item.price_in_cents}} (save  {{item.limited_time_offer_savings_in_cents}})</td> 
+							<td>{{item.quantity}}</td> <td>{{item.limited_time_offer_ends_on}}</td> 
+						</tr>     
 					</table>   
-
 				</div>
 			</li>
 		</ul>
