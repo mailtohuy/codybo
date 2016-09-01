@@ -8,11 +8,11 @@
 		angular.module('myApp', [])
 		.controller('StoreController', function($scope, $http) {
 
-			$scope.address = "";
+			this.address = "";
 			$scope.stores = [];
 
 			this.getStores = function() {
-				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent($scope.address))
+				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(this.address))
 				.then(
 					function(data) {
 						$scope.stores = data;
