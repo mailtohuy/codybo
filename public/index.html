@@ -1,17 +1,59 @@
 <!DOCTYPE html> 
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>cdbo</title>
-	</head>
-	<body>
+<html ng-app="myApp">
+<head>
+	<meta charset="utf-8">
+	<title>cdbo</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+	<script type="text/javascript">
+		angular.module('myApp', [])
+		.controller('StoreController', function($http) {
+			var storeCtlr = this,
+				storeCtlr.address = "",
+				storeCtlr.stores = [];
+
+			storeCtlr.getStores = function() {
+				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
+				.then(
+					funtion(data) {
+						storeCtlr.stores = JSON.parse(data);
+					}
+				);
+			};
+
+			storeCtlr.remaining = function() {
+			
+			
+			};
+
+			storeCtlr.archive = function() {
+
+			};
+		}); // StoreController
+	</script>
+
+</head>
+<body>
+	<div ng-controller="StoreController as storeCtlr">
+		<label>Address:</label>
+		<input type="text" ng-model="storeCtlr.address" placeholder="Enter address">
+		<input type="submit" ng-click="storeCtlr.getStores()" class="btn-primary" value="Find">
+		<ul class="unstyled">
+			<li ng-repeat="store in storeCtlr.stores">
+				<span>{{store.address_line_1}}, {{store.city}}, {{store.postal_code}} </span>
+			</label>
+		</li>
+
+    </div>
+
+<!--
+
+    <div>
 		<p>10 stores nearest to your current position</p>
 		<img src="loading.gif" id="spin">
 		<div id="url" style="display: none;"> </div>
 		<div id="geo"> </div>   
-		</script>     
-		<script src="https://cdn.jsdelivr.net/jquery/1.10.2/jquery.min.js"></script> 
-		<script type="text/javascript">     
+		</script> 
+		<script >     
 			navigator.geolocation.getCurrentPosition(function(position) {
   				url = "https://codybo.herokuapp.com/lcbo-nearby?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
   				document.getElementById("url").innerText = url;
@@ -26,6 +68,9 @@
         		});	
 			});
 		</script>    
+    </div>
 
+
+-->
 	</body>
 </html>
