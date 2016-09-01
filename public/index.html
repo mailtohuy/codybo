@@ -40,7 +40,7 @@
 		<ul>
 			<li ng-repeat="s in mc.stores">
 
- 				<span><a href="mc.getSales({{s.id}})">{{s.name}}</a> {{s.address_line_1}} | {{s.city}} | {{s.postal_code}}</span>
+ 				<span><a ng-click="mc.getSales({{s.id}})">{{s.name}}</a> {{s.address_line_1}} | {{s.city}} | {{s.postal_code}}</span>
 				<div id="sales_{{s.id}}">
 				</div>
 			</li>
