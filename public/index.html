@@ -7,9 +7,10 @@
 	<script type="text/javascript">
 		angular.module('myApp', [])
 		.controller('StoreController', function($http) {
-			var storeCtlr = this,
-				storeCtlr.address = "",
-				storeCtlr.stores = [];
+			var storeCtlr = this;
+
+			storeCtlr.address = "";
+			storeCtlr.stores = [];
 
 			storeCtlr.getStores = function() {
 				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
