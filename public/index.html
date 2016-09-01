@@ -6,7 +6,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 	<script type="text/javascript">
 		angular.module('myApp', [])
-		.controller('StoreController', function($scope, $http) {
+		.controller('StoreController', function($http) {
 			var storeCtlr = this;
 			storeCtlr.address = "";
 			storeCtlr.stores = [];
@@ -15,7 +15,7 @@
 				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
 				.then(
 					function(data) {
-						storeCtlr.stores = data;
+						storeCtlr.stores = [{a:1}, {a:2}, {a:3}];//data;
 				}); // then
 			};
 		}); // StoreController
@@ -23,16 +23,17 @@
 
 </head>
 <body ng-app="myApp">
-	<div ng-controller="StoreController as c">
-		<input type="text" ng-model="c.address">
-		<input type="submit" ng-click="c.getStores()" value="Submit">
+	<div ng-controller="StoreController as mc">
+		<input type="text" ng-model="mc.address">
+		<input type="submit" ng-click="mc.getStores()" value="Submit">
 		<ul>
-			<li ng-repeat="store in c.stores">
-				<span>{{store.name}}</span>
-				<span>{{store.address_line_1}}</span>
-				<span>{{store.city}}</span>
-				<span>{{store.postal_code}}</span>
-			</li>
+			<li ng-repeat="s in mc.stores">
+				<span>{{s.a}}</span>
+<!-- 				<span>{{s.name}}</span>
+				<span>{{s.address_line_1}}</span>
+				<span>{{s.city}}</span>
+				<span>{{s.postal_code}}</span>
+ -->			</li>
 		</ul>
 
     </div>
