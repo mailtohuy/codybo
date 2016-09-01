@@ -8,7 +8,8 @@
 		.controller('StoreController', function($http) {
 			var storeCtlr = this;
 			storeCtlr.address = "";
-			storeCtlr.stores = [];
+			storeCtlr.stores = []; // stores -> [{id:411, name, ...}, {id:123,...}]
+			storeCtlr.sales = {}; // sales -> {411 : [{productId,...}], 123: [...] }
 
 			storeCtlr.getStores = function() {
 				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
@@ -17,6 +18,16 @@
 				}, function(err) {
 					console.log('Error while loading getStores');
 				}); // then
+			};
+
+			storeCtlr.getSales = function(storeId) {
+				$http.get('https://codybo.herokuapp.com/lcbo/' + storeId)
+				.then(function(res) {
+						storeCtlr.sales[storeId] = res.data; 
+
+				}, function(err) {
+					console.log('Error while loading getSales');
+				}); // then				
 			};
 		}); // StoreController
 	</script>
@@ -28,10 +39,10 @@
 		<input type="submit" ng-click="mc.getStores()" value="Submit">
 		<ul>
 			<li ng-repeat="s in mc.stores">
- 				<span>{{s.name}}</span>
- 				<span>{{s.address_line_1}}</span>
-				<span>{{s.city}}</span>
-				<span>{{s.postal_code}}</span>
+
+ 				<span><a href="mc.getSales({{s.id}})">{{s.name}}</a> {{s.address_line_1}} | {{s.city}} | {{s.postal_code}}</span>
+				<div id="sales_{{s.id}}">
+				</div>
 			</li>
 		</ul>
 
