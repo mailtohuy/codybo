@@ -38,7 +38,7 @@
 		<input type="text" ng-model="storeCtlr.address" placeholder="Enter address">
 		<input type="submit" ng-click="storeCtlr.getStores()" class="btn-primary" value="Find">
 		<ul class="unstyled">
-			<li ng-repeat="store in storeCtlr.stores">
+			<li ng-repeat="store in stores">
 				<span>{{store.name}}</span>
 				<span>{{store.address_line_1}}</span>
 				<span>{{store.city}}</span>
