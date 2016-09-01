@@ -9,6 +9,7 @@ function getJSON(url) {
 
 module.exports.getStoresNearby = function(lat, lon) {
 	var url = `https://lcboapi.com/stores?access_key=${apiKey}&lat=${lat}&lon=${lon}&per_page=10`;
+
 	return getJSON(url)
 	.then(function(json){
 
@@ -24,6 +25,25 @@ module.exports.getStoresNearby = function(lat, lon) {
 		return [];
 	})
 };
+
+module.exports.getStoresNearAddress = function(addr) {
+	var url = `https://lcboapi.com/stores?access_key=${apiKey}&geo=${encodeURIComponent(addr)}&per_page=10`;
+
+	return getJSON(url)
+	.then(function(json){
+
+		/* check for error from LCBO API */
+		if (json.status != 200) {
+			throw new Error(json.status);
+		}
+
+		return json.result;
+	})
+	.catch(function(err) {
+		console.error(err);
+		return [];
+	})	
+}
 
 module.exports.getSalesAtStore = function (storeId) {
 	var url = `https://lcboapi.com/stores/${storeId}/products?access_key=${apiKey}&where=has_limited_time_offer&q=wine&per_page=100`;

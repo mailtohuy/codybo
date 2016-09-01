@@ -13,14 +13,20 @@ server.get("/echo/:text", function(req, res) {
 	res.send(req.params.text);
 });
 
-server.get("/lcbo/:storeId", function(req,res) {
+server.get("/lcbo/:storeId", function(req,res) {	
 	lcbo.getSalesAtStore(req.params.storeId)
 	.then((json) => res.send(json));
 });
 
 server.get("/lcbo-nearby", function(req,res) {
-	lcbo.getStoresNearby(req.query.lat,req.query.lon)
-	.then((json) => res.send(json));
+	var p;
+	if (req.query['geo'] != undefined) {
+		p = lcbo.getStoresNearAddress(req.query.geo);
+	} else {
+		p = lcbo.getStoresNearby(req.query.lat,req.query.lon);
+	}
+
+	p.then((json) => res.send(json));
 });
 
 var port = server.get('PORT');
