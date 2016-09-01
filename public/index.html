@@ -7,26 +7,17 @@
 	<script type="text/javascript">
 		angular.module('myApp', [])
 		.controller('StoreController', function($scope, $http) {
-
-			this.address = "";
-			$scope.stores = [];
+			var storeCtlr = this;
+			storeCtlr.address = "";
+			storeCtlr.stores = [];
 
 			this.getStores = function() {
-				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(this.address))
+				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
 				.then(
 					function(data) {
-						$scope.stores = data;
+						storeCtlr.stores = data;
 					}
 				);
-			};
-
-			this.remaining = function() {
-			
-			
-			};
-
-			this.archive = function() {
-
 			};
 		}); // StoreController
 	</script>
@@ -38,7 +29,7 @@
 		<input type="text" ng-model="storeCtlr.address" placeholder="Enter address">
 		<input type="submit" ng-click="storeCtlr.getStores()" class="btn-primary" value="Find">
 		<ul class="unstyled">
-			<li ng-repeat="store in stores">
+			<li ng-repeat="store in storeCtlr.stores">
 				<span>{{store.name}}</span>
 				<span>{{store.address_line_1}}</span>
 				<span>{{store.city}}</span>
