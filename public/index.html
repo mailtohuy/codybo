@@ -12,7 +12,7 @@
 			$scope.stores = [];
 
 			this.getStores = function() {
-				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
+				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent($scope.address))
 				.then(
 					function(data) {
 						$scope.stores = data;
