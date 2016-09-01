@@ -14,7 +14,8 @@
 			this.getStores = function() {
 				$http.get('https://codybo.herokuapp.com/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
 				.then(function(data) {
-						storeCtlr.stores = data;
+						storeCtlr.stores = JSON.parse(data);
+						console.log(data);
 				}); // then
 			};
 		}); // StoreController
@@ -28,11 +29,10 @@
 		<ul>
 			<li ng-repeat="s in mc.stores">
  				<span>{{s.name}}</span>
-<!--
 				<span>{{s.address_line_1}}</span>
 				<span>{{s.city}}</span>
 				<span>{{s.postal_code}}</span>
- -->			</li>
+ 			</li>
 		</ul>
 
     </div>
