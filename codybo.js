@@ -7,6 +7,34 @@ function getJSON(url) {
 	.then((html) => JSON.parse(html));
 }
 
+function sendLcboQuery(query) {
+	/*
+	* Output: [] on failure, [{}] on success
+	*/
+	var apiKey = 'MDpkNzE1NTI2ZS0xOWUyLTExZTYtOGVlMi03N2U2MGFjMTAzMjY6QVdzWGpYUFQweW9uejFmRUZjYkNzcVhicE5UWktXQWdna0cz';
+	var baseUrl = 'https://lcboapi.com/products?access_key=' + apiKey;
+
+	return getJSON(baseUrl + '&' + query)	
+	.then(function(json){
+		/* check for error from LCBO API */
+		if (json.status != 200) {
+			throw new Error(json.status);
+		}
+
+		return json.result;
+	})
+	.catch(function(err) {
+		console.error(err);
+		return [];
+	});
+}
+
+module.exports.findProduct = function (query) {
+	var q = 'q=' + encodeURIComponent(query);
+
+	return sendLcboQuery(q);
+}
+
 module.exports.getStoresNearby = function(lat, lon) {
 	var url = `https://lcboapi.com/stores?access_key=${apiKey}&lat=${lat}&lon=${lon}&per_page=10`;
 
