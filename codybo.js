@@ -40,22 +40,7 @@ module.exports.getStoresNearby = function(lat, lon) {
 };
 
 module.exports.getStoresNearAddress = function(addr) {
-	var url = `https://lcboapi.com/stores?access_key=${apiKey}&geo=${encodeURIComponent(addr)}&per_page=10`;
-
-	return getJSON(url)
-	.then(function(json){
-
-		/* check for error from LCBO API */
-		if (json.status != 200) {
-			throw new Error(json.status);
-		}
-
-		return json.result;
-	})
-	.catch(function(err) {
-		console.error(err);
-		return [];
-	})	
+	return sendLcboQuery(`geo=${encodeURIComponent(addr)}&per_page=10`);
 }
 
 module.exports.getSalesAtStore = function (storeId) {
