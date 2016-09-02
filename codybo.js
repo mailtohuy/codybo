@@ -7,14 +7,14 @@ function getJSON(url) {
 	.then((html) => JSON.parse(html));
 }
 
-function sendLcboQuery(query) {
+function sendLcboQuery(endpoint, query) {
 	/*
 	* Output: [] on failure, [{}] on success
 	*/
 	var apiKey = 'MDpkNzE1NTI2ZS0xOWUyLTExZTYtOGVlMi03N2U2MGFjMTAzMjY6QVdzWGpYUFQweW9uejFmRUZjYkNzcVhicE5UWktXQWdna0cz';
-	var baseUrl = 'https://lcboapi.com/products?access_key=' + apiKey;
+	var url = 'https://lcboapi.com/' +  endpoint + '?access_key=' + apiKey + '&' + query;
 
-	return getJSON(baseUrl + '&' + query)	
+	return getJSON(url)	
 	.then(function(json){
 		/* check for error from LCBO API */
 		if (json.status != 200) {
@@ -29,18 +29,36 @@ function sendLcboQuery(query) {
 	});
 }
 
+function 
+
 module.exports.findProduct = function (query) {
 	var q = 'q=' + encodeURIComponent(query);
 
-	return sendLcboQuery(q);
+	return sendLcboQuery('products', q);
 }
 
 module.exports.getStoresNearby = function(lat, lon) {
-	return sendLcboQuery(`lat=${lat}&lon=${lon}&per_page=10`);
+	return sendLcboQuery('stores', `lat=${lat}&lon=${lon}&per_page=10`);
 };
 
 module.exports.getStoresNearAddress = function(addr) {
 	return sendLcboQuery(`geo=${encodeURIComponent(addr)}&per_page=10`);
+	var url = `https://lcboapi.com/stores?access_key=${apiKey}&`;
+
+	return getJSON(url)
+	.then(function(json){
+
+		/* check for error from LCBO API */
+		if (json.status != 200) {
+			throw new Error(json.status);
+		}
+
+		return json.result;
+	})
+	.catch(function(err) {
+		console.error(err);
+		return [];
+	})	
 }
 
 module.exports.getSalesAtStore = function (storeId) {
