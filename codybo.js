@@ -36,22 +36,7 @@ module.exports.findProduct = function (query) {
 }
 
 module.exports.getStoresNearby = function(lat, lon) {
-	var url = `https://lcboapi.com/stores?access_key=${apiKey}&lat=${lat}&lon=${lon}&per_page=10`;
-
-	return getJSON(url)
-	.then(function(json){
-
-		/* check for error from LCBO API */
-		if (json.status != 200) {
-			throw new Error(json.status);
-		}
-
-		return json.result;
-	})
-	.catch(function(err) {
-		console.error(err);
-		return [];
-	})
+	return sendLcboQuery(`lat=${lat}&lon=${lon}&per_page=10`);
 };
 
 module.exports.getStoresNearAddress = function(addr) {
