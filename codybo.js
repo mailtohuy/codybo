@@ -29,8 +29,6 @@ function sendLcboQuery(endpoint, query) {
 	});
 }
 
-function 
-
 module.exports.findProduct = function (query) {
 	var q = 'q=' + encodeURIComponent(query);
 
