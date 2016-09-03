@@ -43,35 +43,12 @@ module.exports.getStoresNearby = function(lat, lon) {
 
 module.exports.getStoresNearAddress = function(addr) {
 	return sendLcboQuery('stores', `geo=${encodeURIComponent(addr)}&per_page=10`);
-	
-	// var url = `https://lcboapi.com/stores?access_key=${apiKey}&`;
-
-	// return getJSON(url)
-	// .then(function(json){
-
-	// 	/* check for error from LCBO API */
-	// 	if (json.status != 200) {
-	// 		throw new Error(json.status);
-	// 	}
-
-	// 	return json.result;
-	// })
-	// .catch(function(err) {
-	// 	console.error(err);
-	// 	return [];
-	// })	
 }
 
 module.exports.getSalesAtStore = function (storeId) {
-	var url = `https://lcboapi.com/stores/${storeId}/products?access_key=${apiKey}&where=has_limited_time_offer&q=wine&per_page=100`;
-
-	return getJSON(url)
+	
+	return sendLcboQuery(`stores/${storeId}/products`, 'where=has_limited_time_offer&q=wine&per_page=100')
 	.then(function(json){
-
-		/* check for error from LCBO API */
-		if (json.status != 200) {
-			throw new Error(json.status);
-		}
 
 		/* add results from page 1 */
 		var products = json.result;
@@ -96,11 +73,7 @@ module.exports.getSalesAtStore = function (storeId) {
 			});
 		})
 		.then((a) => products.concat(a.result))
-	})
-	.catch(function(err) {
-		console.error(err);
-		return [];
-	})
+	});
 };
 
 
