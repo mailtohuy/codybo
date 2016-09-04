@@ -32,7 +32,7 @@ function sendLcboQuery(endpoint, query) {
 }
 
 module.exports.findProduct = function (query) {
-	var q = 'q=' + encodeURIComponent(query);
+	var q = 'where_not=is_dead&q=' + encodeURIComponent(query);
 
 	return sendLcboQuery('products', q);
 }
