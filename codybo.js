@@ -52,9 +52,9 @@ module.exports.getSalesAtStore = function (storeId) {
 
 		/* add results from page 1 */
 		var products = json;
-		var total_pages = json.pager.total_pages;
+		var total_pages = (json.pager != undefined && json.pager.total_pages != undefined) ? json.pager.total_pages : 1;
 
-		if (total_pages || total_pages == 1) {
+		if (total_pages == 1) {
 			return products;
 		}
 
