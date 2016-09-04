@@ -34,6 +34,11 @@ server.get("/lcbo-product/:name", function(req,res) {
 	.then((json) => res.send(json));
 });
 
+server.get("/lcbo-inventory/:productId", function(req,res) {	
+	lcbo.lookUpInventory(req.params.productId)
+	.then((json) => res.send(json));
+});
+
 var port = server.get('PORT');
 server.listen(port, function() {
 	console.log('codybo is running on port', port);

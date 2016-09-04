@@ -37,6 +37,11 @@ module.exports.findProduct = function (query) {
 	return sendLcboQuery('products', q);
 }
 
+module.exports.lookUpInventory = function (productId) {
+	var q = 'product_id=' + productId;
+	return sendLcboQuery('inventories', q);
+}
+
 module.exports.getStoresNearby = function(lat, lon) {
 	return sendLcboQuery('stores', `lat=${lat}&lon=${lon}&per_page=10`);
 };
