@@ -23,7 +23,7 @@ function sendLcboQuery(endpoint, query) {
 			throw new Error(json.status);
 		}
 
-		return json.result;
+		return json.result; //TODO: pager info is lost. Sol: {}
 	})
 	.catch(function(err) {
 		console.error(err);
@@ -51,10 +51,10 @@ module.exports.getSalesAtStore = function (storeId) {
 	.then(function(json){
 
 		/* add results from page 1 */
-		var products = json.result;
+		var products = json;
 		var total_pages = json.pager.total_pages;
 
-		if (total_pages == 1) {
+		if (total_pages || total_pages == 1) {
 			return products;
 		}
 
