@@ -47,7 +47,7 @@ module.exports.getStoresNearAddress = function(addr) {
 
 module.exports.getSalesAtStore = function (storeId) {
 
-	return sendLcboQuery(`stores/${storeId}/products`, 'where=has_limited_time_offer&q=wine&per_page=100')
+	return sendLcboQuery(`stores/${storeId}/products`, 'where=has_limited_time_offer&per_page=100')
 	.then(function(json){
 
 		/* add results from page 1 */
