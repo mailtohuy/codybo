@@ -13,7 +13,7 @@ server.use(express.static(__dirname + '/public'));
 server.use(bodyParser.json());
 
 server.get("/echo/:text", function(req, res) {
-	res.send(req.params.text);
+	res.send(JSON.stringify(req));
 });
 
 server.get("/lcbo/:storeId", function(req,res) {	
@@ -37,9 +37,16 @@ server.get("/lcbo-product/:name", function(req,res) {
 	.then((json) => res.send(json));
 });
 
-server.get("/lcbo-inventory/:productId", function(req,res) {	
-	lcbo.lookUpInventory(req.params.productId)
-	.then((json) => res.send(json));
+server.get("/lcbo-inventory", function(req,res) {
+	var geo = (req.query['geo'] != undefined) ? req.query['geo'] : false;
+	var pid = (req.query['pid'] != undefined) ? req.query['pid'] : false;
+	var p;
+	if (geo && pid && true) {
+		p = lcbo.lookUpInventoryNearAddress(pid, geo);
+	} else if (geo && true) {
+		p = lcbo.lookUpInventory(pid);
+	}
+	p.then((json) => res.send(json));		
 });
 
 server.post("/groupme", function(req,res) {
