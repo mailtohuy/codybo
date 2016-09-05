@@ -62,13 +62,13 @@ server.post("/groupme", function(req,res) {
 	gm.receiveMessage(req.body);
 
 	/* Dispatch command */
-	var cmd = req.body.text.toLowerCase().split(' ');
+	var cmd = req.body.text.toLowerCase().split(' '); //TODO: dissect command by key words, e.g "find (smirnoff vodka) near (m3n 2a7)" 
 	if (cmd[0] == 'find') {
 		lcbo.findProduct(cmd[1])
 		.then(function(results){
 			var txt = results.map(function(p) {
-				return p.id + ', ' + p.name + ', $' + p.price_in_cents ;
-			}).join('.\n');
+				return p.id + ', ' + p.name + ', $' + p.price_in_cents/100 ;
+			}).join('.\n'); //TODO: limit response to 3 records.
 
 			gm.postMessage(txt);
 		});
@@ -79,8 +79,8 @@ server.post("/groupme", function(req,res) {
 		.then(function(results) {
 			var txt = results.map(function(s) {
 				return s.name + ', quantity: ' +  s.quantity;
-			}).join('.\n');
-			
+			}).join('.\n'); //TODO: limit response to 3 records.
+
 			gm.postMessage(txt);
 		}) 
 	} // if cmd = 'near'
