@@ -49,6 +49,9 @@ server.get("/lcbo-inventory", function(req,res) {
 		console.log('geo && true');
 		lcbo.lookUpInventory(pid)
 		.then((json) => res.send(json));
+	} else {
+		console.log('nothing found');
+		return "nothing";
 	}
 });
 
