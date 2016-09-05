@@ -35,7 +35,7 @@ module.exports.postMessage = function postMessage(msg) {
 		json: true
 	};
 
-	return rq(options)
+	return rp(options)
 		.then( function(body) {
 			console.log('groupme - postMessage - sent: ' + botResp + ' to ' + botID);
 		})
