@@ -81,7 +81,5 @@ server.listen(port, function() {
 });
 
 process.on('SIGTERM', function () {
-  server.close(function () {
     console.log('SIGTERM - codybo is closeing on port', port);
-  });
 });
