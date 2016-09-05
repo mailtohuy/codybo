@@ -1,9 +1,9 @@
 var express = require('express')
 var bodyParser = require("body-parser");
 var lcbo = require('./codybo.js');
+var models = require('./dbmodels.js');
 
-
-var server = express()
+var server = express();
 
 server.set('PORT', (process.env.PORT || 5000));
 
@@ -52,26 +52,9 @@ server.post("/groupme", function(req,res) {
 	db.connection.on('error', console.error.bind(console, 'connection error!'));
 	db.connection.once('open', function() {
 
-		/* Create schema */
-		var messageSchema = new db.Schema({
-			attachments:  db.Schema.Types.Mixed,
-			avatar_url: String,
-			created_at: Number,
-			group_id: Number,
-			id: Number,
-			name: String,
-			sender_id: String,
-			sender_type: String,
-			source_guid: String,
-			system: Boolean,
-			text: String,
-			user_id: Number
-		});
-		
-		var ChatMessage = db.model('ChatMessage', messageSchema, 'GroupMe');
 
 		/* Save message to database */
-		var message = new ChatMessage(req.body);
+		var message = new models.ChatMessage(req.body);
 
 		message.save(function (err) {
 			if (err) {
