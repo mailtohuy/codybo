@@ -43,6 +43,9 @@ server.get("/lcbo-inventory/:productId", function(req,res) {
 });
 
 server.post("/groupme", function(req,res) {
+
+	console.log(JSON.stringify(req.body));
+
 	var db = require('mongoose');
 	db.Promise = global.Promise;
 	db.connect('mongodb://writer:writer@ds013456.mlab.com:13456/heroku_9lwl8gdd');
