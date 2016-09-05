@@ -62,7 +62,7 @@ server.post("/groupme", function(req,res) {
 	gm.receiveMessage(req.body);
 
 	/* Dispatch command */
-	var cmd = req.body.text.split(' ');
+	var cmd = req.body.text.toLowerCase().split(' ');
 	if (cmd[0] == 'find') {
 		lcbo.findProduct(cmd[1])
 		.then(function(results){
@@ -73,6 +73,17 @@ server.post("/groupme", function(req,res) {
 			gm.postMessage(txt);
 		});
 	}; // if cmd = 'find'
+
+	if (cmd[0] == 'near') {
+		lcbo.lookUpInventoryNearAddress(cmd[1], cmd[2])
+		.then(function(results) {
+			var txt = results.map(function(s) {
+				return s.name + ', quantity: ' +  s.quantity;
+			}).join('.\n');
+			
+			gm.postMessage(txt);
+		}) 
+	} // if cmd = 'near'
 });
 
 var port = server.get('PORT');
