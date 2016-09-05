@@ -54,7 +54,7 @@ server.post("/groupme", function(req,res) {
 
 		/* Create schema */
 		var messageSchema = new db.Schema({
-			attachments: [String],
+			attachments:  [Mixed],
 			avatar_url: String,
 			created_at: Number,
 			group_id: Number,
