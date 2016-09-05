@@ -42,8 +42,8 @@ module.exports.lookUpInventory = function (productId) {
 	return sendLcboQuery('inventories', q);
 }
 
-module.exports.lookUpInventoryNearAddress = function (productId, addr) {
-	var q = 'product_id=' + productId + '&geo=encodeURIComponent(addr)' ; //product_id=272807&geo=m3n+2a7
+module.exports.lookUpInventoryNearAddress = function (productId, geo) {
+	var q = 'product_id=' + productId + '&geo=' + encodeURIComponent(geo) ; //product_id=272807&geo=m3n+2a7
 	return sendLcboQuery('stores', q);
 }
 
