@@ -42,9 +42,11 @@ server.get("/lcbo-inventory", function(req,res) {
 	var pid = (req.query['pid'] != undefined) ? req.query['pid'] : false;
 
 	if (geo && pid && true) {
+		console.log('geo && pid && true');
 		lcbo.lookUpInventoryNearAddress(pid, geo)
 		.then((json) => res.send(json));
 	} else if (geo && true) {
+		console.log('geo && true');
 		lcbo.lookUpInventory(pid)
 		.then((json) => res.send(json));
 	}
