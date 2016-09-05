@@ -1,7 +1,7 @@
 var express = require('express')
 var bodyParser = require("body-parser");
 var lcbo = require('./codybo.js');
-var models = require('./dbmodels.js');
+var gm = require('./groupme.js');
 
 var server = express();
 
@@ -13,7 +13,8 @@ server.use(express.static(__dirname + '/public'));
 server.use(bodyParser.json());
 
 server.get("/echo/:text", function(req, res) {
-	res.send(JSON.stringify(req));
+	console.log(req);
+	res.send(req.body);
 });
 
 server.get("/lcbo/:storeId", function(req,res) {	
@@ -42,7 +43,7 @@ server.get("/lcbo-inventory", function(req,res) {
 	var pid = (req.query['pid'] != undefined) ? req.query['pid'] : false;
 
 	if (geo && pid && true) {
-		lcbo.lookUpInventoryNearAddress(pid, geo)
+		lcbo.lookUpInventoryNearAddress(pid, geo);
 		.then((json) => res.send(json));
 	} else if (pid && true) {
 		lcbo.lookUpInventory(pid)
@@ -57,26 +58,23 @@ server.post("/groupme", function(req,res) {
 
 	console.log(JSON.stringify(req.body));
 
-	var db = require('mongoose');
-	db.Promise = global.Promise;
-	db.connect('mongodb://writer:writer@ds013456.mlab.com:13456/heroku_9lwl8gdd');
-	db.connection.on('error', console.error.bind(console, 'connection error!'));
-	db.connection.once('open', function() {
+	/* Save msg to database */
+	gm.receiveMessage(req.body);
 
+	/* Dispatch command */
+	var cmd = req.body.text.split(' ');
+	switch cmd[0] {
+	case 'find':
+		lcbo.findProduct(cmd[1])
+		.then(function(results){
+			var txt = results.map(function(p) {
+				return p.id + ', ' + p.name + ', $' + p.price_in_cents ;
+			}).join('.\n');
 
-		/* Save message to database */
-		var message = new models.ChatMessage(req.body);
-
-		message.save(function (err) {
-			if (err) {
-				console.error(err);
-		  	} 
-
-			/* Close connection */
-		  	db.connection.close()
-		}); //message.save
-
-	});		
+			gm.postMessage(txt);
+		});
+		break;
+	};		
 });
 
 var port = server.get('PORT');

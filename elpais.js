@@ -1,6 +1,6 @@
 var rp = require('request-promise');
 var cheerio = require('cheerio');
-var models = require('./dbmodels.js');
+var models = require('./mydb.js');
 
 			// console.log(
 			// 	// $('.titulo').length,  
