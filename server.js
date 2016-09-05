@@ -72,3 +72,9 @@ var port = server.get('PORT');
 server.listen(port, function() {
 	console.log('codybo is running on port', port);
 });
+
+process.on('SIGTERM', function () {
+  server.close(function () {
+    console.log('SIGTERM - codybo is closeing on port', port);
+  });
+});
