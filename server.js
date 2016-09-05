@@ -40,13 +40,14 @@ server.get("/lcbo-product/:name", function(req,res) {
 server.get("/lcbo-inventory", function(req,res) {
 	var geo = (req.query['geo'] != undefined) ? req.query['geo'] : false;
 	var pid = (req.query['pid'] != undefined) ? req.query['pid'] : false;
-	var p;
+
 	if (geo && pid && true) {
-		p = lcbo.lookUpInventoryNearAddress(pid, geo);
+		lcbo.lookUpInventoryNearAddress(pid, geo)
+		.then((json) => res.send(json));
 	} else if (geo && true) {
-		p = lcbo.lookUpInventory(pid);
+		lcbo.lookUpInventory(pid)
+		.then((json) => res.send(json));
 	}
-	p.then((json) => res.send(json));		
 });
 
 server.post("/groupme", function(req,res) {

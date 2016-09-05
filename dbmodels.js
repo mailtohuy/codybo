@@ -12,17 +12,17 @@ module.exports.NewsArticle = db.model('NewsArticle', newsArticleSchema, 'elPais'
 
 /* schema for messages from GroupMe */
 var messageSchema = new db.Schema({
+	text: String,	
+	created_at: Number,	
+	avatar_url: String,	
+	group_id: Number,	
 	attachments:  db.Schema.Types.Mixed,
-	avatar_url: String,
-	created_at: Number,
-	group_id: Number,
 	id: Number,
 	name: String,
 	sender_id: String,
 	sender_type: String,
 	source_guid: String,
 	system: Boolean,
-	text: String,
 	user_id: Number
 });
 
