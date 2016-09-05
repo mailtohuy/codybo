@@ -63,8 +63,7 @@ server.post("/groupme", function(req,res) {
 
 	/* Dispatch command */
 	var cmd = req.body.text.split(' ');
-	switch cmd[0] {
-	case 'find':
+	if (cmd[0] == 'find') {
 		lcbo.findProduct(cmd[1])
 		.then(function(results){
 			var txt = results.map(function(p) {
@@ -73,8 +72,7 @@ server.post("/groupme", function(req,res) {
 
 			gm.postMessage(txt);
 		});
-		break;
-	};		
+	}; // if cmd = 'find'
 });
 
 var port = server.get('PORT');
