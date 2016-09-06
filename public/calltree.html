@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>Call Tree Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="input-group">
+  <span class="input-group-addon" id="basic-addon1">@</span>
+  <input type="text" class="form-control" id="myname" placeholder="Enter your name" aria-describedby="basic-addon1">
+</div>
+
+<div class="input-group">
+  <span class="input-group-addon">#</span>
+  <input type="text" class="form-control" id="myphone" placeholder="Enter your phone number" aria-describedby="basic-addon1">
+</div>
+
+<div class="center-block">
+<button type="button" id="submit" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-envelope" aria-hidden="true">
+</button>
+
+<button type="button" id="reset" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-refresh" aria-hidden="true"/>
+</button>
+</div>
+
+<div class="panel panel-default" id="preview" style="display:none">
+  <div class="panel-heading">
+The below message will be sent when you click on the names
+  </div>
+  <div class="panel-body" ><i id="preview-text"></i></div>
+</div>
+
+<div class="list-group" id="links"></div>
+
+<script type="text/javascript">
+function generate() {
+$("#links").empty();
+
+var template = "Hi [receiver]. This is [myname] on [time]. This is a test of the Call Tree. Please text me back at [myphone].";
+
+var data = [['Mary','416-418-8042'],['Huy','647-865-7916'],['Adel','647-880-4207'],['Amarendra','905-781-9707'],['Anuradha','647-468-4942'],['Archana','416-876-2462'],['Arnaud','416-939-4669'],['Ashish','647-284-7099'],['Chris','647-461-9176'],['Neelima','647-287-7793'],['Nisharg','416-648-3732'],['Pratik','647-702-1233'],['Pulak','416-464-5696'],['Rizwan','647-505-7815'],['Satinder','647-500-9584'],['Sravanthi','647-949-2352'],['Suhas','416-820-3777'],['Venayak','416-302-5866'],['Wendy','647-966-2316']];
+
+var text_template = template.replace('[myname]', $("#myname").val()).replace('[time]', (new Date()).toLocaleString()).replace('[myphone]', $("#myphone").val());
+
+$('#preview-text').text(text_template);
+$("#preview").show();
+
+var link_template = '<a class="list-group-item" href="sms:[phone]&body=[text]">[name]<a>';
+
+data.map(function(info) {
+var name = info[0];
+var phone = info[1];
+var text = encodeURIComponent(text_template.replace('[receiver]', name).replace('[phone]', phone));
+$('#links').append(link_template.replace('[phone]', phone).replace('[name]', name).replace('[text]', text));
+});
+}
+
+function reset() {
+$("#preview").hide();
+$("#links").empty();
+}
+
+function validate() {
+if (($('#myname').val().length > 0) && $("#myphone").val().length > 0) {
+generate();
+} else {
+reset() ;
+}
+}
+
+$("#submit").click(validate);
+$("#reset").click(reset);
+
+</script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</body>
+</html>
