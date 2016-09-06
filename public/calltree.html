@@ -42,38 +42,46 @@ The below message will be sent when you click on the names
 
 <script type="text/javascript">
 function generate() {
-$("#links").empty();
+	$("#links").empty();
 
-var template = "Hi [receiver]. This is [myname] on [time]. This is a test of the Call Tree. Please text me back at [myphone].";
+	var template = "Hi [receiver]. This is [myname] on [time]. This is a test of the Call Tree. Please text me back at [myphone].";
 
-var data = [['Mary','416-418-8042'],['Huy','647-865-7916'],['Adel','647-880-4207'],['Amarendra','905-781-9707'],['Anuradha','647-468-4942'],['Archana','416-876-2462'],['Arnaud','416-939-4669'],['Ashish','647-284-7099'],['Chris','647-461-9176'],['Neelima','647-287-7793'],['Nisharg','416-648-3732'],['Pratik','647-702-1233'],['Pulak','416-464-5696'],['Rizwan','647-505-7815'],['Satinder','647-500-9584'],['Sravanthi','647-949-2352'],['Suhas','416-820-3777'],['Venayak','416-302-5866'],['Wendy','647-966-2316']];
+	var data = [['Mary','416-418-8042'],['Huy','647-865-7916'],['Adel','647-880-4207'],['Amarendra','905-781-9707'],['Anuradha','647-468-4942'],['Archana','416-876-2462'],['Arnaud','416-939-4669'],['Ashish','647-284-7099'],['Chris','647-461-9176'],['Neelima','647-287-7793'],['Nisharg','416-648-3732'],['Pratik','647-702-1233'],['Pulak','416-464-5696'],['Rizwan','647-505-7815'],['Satinder','647-500-9584'],['Sravanthi','647-949-2352'],['Suhas','416-820-3777'],['Venayak','416-302-5866'],['Wendy','647-966-2316']];
 
-var text_template = template.replace('[myname]', $("#myname").val()).replace('[time]', (new Date()).toLocaleString()).replace('[myphone]', $("#myphone").val());
+	var text_template = template.replace('[myname]', $("#myname").val()).replace('[time]', (new Date()).toLocaleString()).replace('[myphone]', $("#myphone").val());
 
-$('#preview-text').text(text_template);
-$("#preview").show();
+	$('#preview-text').text(text_template);
+	$("#preview").show();
 
-var link_template = '<a class="list-group-item" href="sms:[phone]&body=[text]">[name]<a>';
+	var link_template;
 
-data.map(function(info) {
-var name = info[0];
-var phone = info[1];
-var text = encodeURIComponent(text_template.replace('[receiver]', name).replace('[phone]', phone));
-$('#links').append(link_template.replace('[phone]', phone).replace('[name]', name).replace('[text]', text));
-});
+	if (/Android/i.test(navigator.userAgent)) {
+		link_template = '<a class="list-group-item" href="sms:[phone]?body=[text]">[name]<a>';
+	} 
+
+	if (/ip(hone|ad|od)/i.test(navigator.userAgent)) {
+		link_template = '<a class="list-group-item" href="sms:[phone]&body=[text]">[name]<a>';
+	}
+
+	data.map(function(info) {
+		var name = info[0];
+		var phone = info[1];
+		var text = encodeURIComponent(text_template.replace('[receiver]', name).replace('[phone]', phone));
+		$('#links').append(link_template.replace('[phone]', phone).replace('[name]', name).replace('[text]', text));
+	});
 }
 
 function reset() {
-$("#preview").hide();
-$("#links").empty();
+	$("#preview").hide();
+	$("#links").empty();
 }
 
 function validate() {
-if (($('#myname').val().length > 0) && $("#myphone").val().length > 0) {
-generate();
-} else {
-reset() ;
-}
+	if (($('#myname').val().length > 0) && $("#myphone").val().length > 0) {
+	generate();
+	} else {
+	reset() ;
+	}
 }
 
 $("#submit").click(validate);
