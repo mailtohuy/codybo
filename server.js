@@ -55,9 +55,8 @@ server.get("/lcbo-inventory", function(req,res) {
 });
 
 
-(function() {
+(function(gm) {
 	/* register the handlers for groupme service */
-	console.log(gm.dispatcher);
 	gm.dispatcher.addKeywords(['find', 'near', 'info']);
 
 	
@@ -85,7 +84,7 @@ server.get("/lcbo-inventory", function(req,res) {
 	gm.dispatcher.registerHandler(['info'], function(ignore) {
 		gm.postMessage('find <name>: lists products with matching name\nfind <pid> near <address>: nearest stores where product is in stock');
 	});
-})();
+})(gm);
 
 server.post("/groupme", function(req,res) {
 
