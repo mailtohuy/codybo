@@ -57,6 +57,7 @@ server.get("/lcbo-inventory", function(req,res) {
 
 (function() {
 	/* register the handlers for groupme service */
+	console.log(gm.dispatcher);
 	gm.dispatcher.addKeywords(['find', 'near', 'info']);
 
 	
