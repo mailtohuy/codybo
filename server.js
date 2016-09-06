@@ -55,7 +55,46 @@ server.get("/lcbo-inventory", function(req,res) {
 });
 
 
-(function(gm) {
+// (function(gm) {
+// 	/* register the handlers for groupme service */
+// 	gm.dispatcher.addKeywords(['find', 'near', 'info']);
+
+	
+// 	var formatStoreResults = function (results) {
+
+// 		var subset = results.splice(0,5); //limit response to 5 records.
+
+// 		subset.map(function (store) {
+// 			return store.name + ', quantity: ' +  store.quantity;
+// 		}).join('.\n'); 
+
+// 		return txt;
+// 	};
+
+// 	/* add handler for 'find pid near geo' */
+// 	gm.dispatcher.registerHandler(['find', 'near'], function(pid, geo) {
+// 		return lcbo.lookUpInventoryNearAddress(pid, geo)
+// 		.then(function(results) {
+// 			var txt = formatStoreResults(results);
+// 			gm.postMessage(txt);
+// 		}); 
+// 	}); // function(pid,geo)
+
+// 	/* add handler for 'info' */
+// 	gm.dispatcher.registerHandler(['info'], function(ignore) {
+// 		gm.postMessage('find <name>: lists products with matching name\nfind <pid> near <address>: nearest stores where product is in stock');
+// 	});
+// })(gm);
+
+server.post("/groupme", function(req,res) {
+
+	console.log(JSON.stringify(req.body));
+
+	/* Save msg to database */
+	gm.receiveMessage(req.body);
+
+///////////////////
+
 	/* register the handlers for groupme service */
 	gm.dispatcher.addKeywords(['find', 'near', 'info']);
 
@@ -84,14 +123,9 @@ server.get("/lcbo-inventory", function(req,res) {
 	gm.dispatcher.registerHandler(['info'], function(ignore) {
 		gm.postMessage('find <name>: lists products with matching name\nfind <pid> near <address>: nearest stores where product is in stock');
 	});
-})(gm);
 
-server.post("/groupme", function(req,res) {
+//////////////////
 
-	console.log(JSON.stringify(req.body));
-
-	/* Save msg to database */
-	gm.receiveMessage(req.body);
 
 	/* Dispatch command */
 	var cmd = req.body.text.toLowerCase();
