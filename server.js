@@ -82,12 +82,8 @@ server.get("/lcbo-inventory", function(req,res) {
 
 	/* add handler for 'info' */
 	gm.dispatcher.registerHandler(['info'], function(ignore) {
-		gm.postMessage('find <name>: lists products with matching name\n
-						find <pid> near <address>: nearest stores where product is in stock');
+		gm.postMessage('find <name>: lists products with matching name\nfind <pid> near <address>: nearest stores where product is in stock');
 	});
-
-
-
 })();
 
 server.post("/groupme", function(req,res) {
