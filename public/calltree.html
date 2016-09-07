@@ -1,139 +1,138 @@
 <html>
-<head>
-<title>Call Tree Test</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<head>
+	<title>Call Tree Test</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 </head>
+
 <body>
 
-<!-- Text inputs -->	
-<div class="input-group">
-  <span class="input-group-addon" id="basic-addon1">@</span>
-  <input type="text" class="form-control" id="myname" placeholder="Enter your name" aria-describedby="basic-addon1">
-</div>
-
-<div class="input-group">
-  <span class="input-group-addon">#</span>
-  <input type="text" class="form-control" id="myphone" placeholder="Enter your phone number" aria-describedby="basic-addon1">
-</div>
-
-<!-- Collapseable panel -->
-<div class="collapse" id="preview">
-	<div class="panel panel-default" >
-	  <div class="panel-heading">The below message will be sent:</div>
-	  <div class="panel-body" ><i id="preview-text"></i></div>
+	<!-- Text inputs -->	
+	<div class="input-group">
+	  <span class="input-group-addon" id="basic-addon1">@</span>
+	  <input type="text" class="form-control" id="myname" placeholder="Enter your name" aria-describedby="basic-addon1">
 	</div>
-</div>
 
-<!-- Buttons -->
-<a id="sendall" class="btn btn-primary btn-lg" role="button">
-  <span class="glyphicon glyphicon-send" aria-hidden="true">
-</a>
+	<div class="input-group">
+	  <span class="input-group-addon">#</span>
+	  <input type="text" class="form-control" id="myphone" placeholder="Enter your phone number" aria-describedby="basic-addon1">
+	</div>
 
-<a id="sendone" class="btn btn-primary btn-lg" role="button">
-  <span class="glyphicon glyphicon-user" aria-hidden="true">
-</a>
+	<!-- Collapseable panel -->
+	<div class="collapse" id="preview">
+		<div class="panel panel-default" >
+		  <div class="panel-heading">The below message will be sent:</div>
+		  <div class="panel-body" ><i id="preview-text"></i></div>
+		</div>
+	</div>
 
-<!-- List for sendOne -->
-<div class="list-group" id="links"></div>
+	<!-- Buttons -->
+	<a id="sendall" class="btn btn-primary btn-lg" role="button">
+	  <span class="glyphicon glyphicon-send" aria-hidden="true">
+	</a>
+
+	<a id="sendone" class="btn btn-primary btn-lg" role="button">
+	  <span class="glyphicon glyphicon-user" aria-hidden="true">
+	</a>
+
+	<!-- List for sendOne -->
+	<div class="list-group" id="links"></div>
 
 
-<script type="text/javascript">
-var template = "Hi. This is [myname] on [time]. This is a test of the Call Tree. Please text me back at [myphone].";
-var data = [['Mary','416-418-8042'],['Huy','647-865-7916'],['Adel','647-880-4207'],['Amarendra','905-781-9707'],['Anuradha','647-468-4942'],['Archana','416-876-2462'],['Arnaud','416-939-4669'],['Ashish','647-284-7099'],['Chris','647-461-9176'],['Neelima','647-287-7793'],['Nisharg','416-648-3732'],['Pratik','647-702-1233'],['Pulak','416-464-5696'],['Rizwan','647-505-7815'],['Satinder','647-500-9584'],['Sravanthi','647-949-2352'],['Suhas','416-820-3777'],['Venayak','416-302-5866'],['Wendy','647-966-2316']];
+	<script type="text/javascript">
+	var template = "Hi. This is [myname] on [time]. This is a test of the Call Tree. Please text me back at [myphone].";
+	var data = [['Mary','416-418-8042'],['Huy','647-865-7916'],['Adel','647-880-4207'],['Amarendra','905-781-9707'],['Anuradha','647-468-4942'],['Archana','416-876-2462'],['Arnaud','416-939-4669'],['Ashish','647-284-7099'],['Chris','647-461-9176'],['Neelima','647-287-7793'],['Nisharg','416-648-3732'],['Pratik','647-702-1233'],['Pulak','416-464-5696'],['Rizwan','647-505-7815'],['Satinder','647-500-9584'],['Sravanthi','647-949-2352'],['Suhas','416-820-3777'],['Venayak','416-302-5866'],['Wendy','647-966-2316']];
 
 
-function showTextTemplate() {
-	$('#preview-text').text(generateTextTemplate());
-	$('#preview').collapse('show');
-}
-
-function getTextTemplate() {
-	return $('#preview-text').text();
-}
-
-function generateTextTemplate() {
-	return template.replace('[myname]', $("#myname").val()).replace('[time]', (new Date()).toLocaleString()).replace('[myphone]', $("#myphone").val());
-}
-
-function getSmsUriScheme() {
-	uriScheme = 'sms:[phone]|body=[text]';
-
-	if (/Android/i.test(navigator.userAgent)) {
-		uriScheme = 'sms:[phone]?body=[text]';
-	} 
-
-	if (/ip(hone|ad|od)/i.test(navigator.userAgent)) {
-		uriScheme = 'sms:[phone]&body=[text]';
+	function showTextTemplate() {
+		$('#preview-text').text(generateTextTemplate());
+		$('#preview').collapse('show');
 	}
 
-	return uriScheme;
-}
-
-function generateSendOneLink(info) {
-	var sendOneListItemTemplate =  getSmsUriScheme() ;
-	var name = info[0];
-	var phone = info[1];
-	var text = encodeURIComponent(getTextTemplate().replace('Hi.', 'Hi ' + name + '.').replace('[phone]', phone));
-	
-	return sendOneListItemTemplate.replace('[phone]', phone).replace('[text]', text);
-}
-
-function updateSendOne() {
-
-	$("#links").empty();
-
-	data.map(function(info) {
-		var a = '<a class="list-group-item" href=' + generateSendOneLink(info) + '>[name]<a>';
-		$('#links').append(a.replace('[name]', info[0]));
-	});
-
-	$('#links').collapse('toggle');
-}
-
-function generateSendAllLink() {
-	var scheme = getSmsUriScheme() ;
-	var phones = '';
-	data.map(function(info){
-		phones = phones + info[1] + ',';
-	});
-	var text =encodeURIComponent(getTextTemplate());
-	return scheme.replace('[text]', text).replace('[phone]', phones);
-}
-
-function updateSendAll() {
-	$('#sendall').attr('href', generateSendAllLink());
-}
-
-function validate() {
-	if (($('#myname').val().length > 0) && ($("#myphone").val().length > 0)) {
-		$("#sendone").removeClass('disabled');
-		$("#sendall").removeClass('disabled');
-		showTextTemplate();
-		// updateSendOne();
-		updateSendAll();
-	} else {
-		$("#sendone").addClass('disabled');
-		$("#sendall").addClass('disabled');	
-
-		$("#links").collapse('hide');
-		$('#preview').collapse('hide');
+	function getTextTemplate() {
+		return $('#preview-text').text();
 	}
-}
 
-$('#myphone').keyup(validate);
-$('#myname').keyup(validate);
-$("#sendone").click(updateSendOne);
+	function generateTextTemplate() {
+		return template.replace('[myname]', $("#myname").val()).replace('[time]', (new Date()).toLocaleString()).replace('[myphone]', $("#myphone").val());
+	}
 
-validate();
+	function getSmsUriScheme() {
+		uriScheme = 'sms:[phone]|body=[text]';
 
-</script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		if (/Android/i.test(navigator.userAgent)) {
+			uriScheme = 'sms:[phone]?body=[text]';
+		} 
+
+		if (/ip(hone|ad|od)/i.test(navigator.userAgent)) {
+			uriScheme = 'sms:[phone]&body=[text]';
+		}
+
+		return uriScheme;
+	}
+
+	function generateSendOneLink(info) {
+		var sendOneListItemTemplate =  getSmsUriScheme() ;
+		var name = info[0];
+		var phone = info[1];
+		var text = encodeURIComponent(getTextTemplate().replace('Hi.', 'Hi ' + name + '.').replace('[phone]', phone));
+		
+		return sendOneListItemTemplate.replace('[phone]', phone).replace('[text]', text);
+	}
+
+	function updateSendOne() {
+
+		$("#links").empty();
+
+		data.map(function(info) {
+			var a = '<a class="list-group-item" href=' + generateSendOneLink(info) + '>[name]<a>';
+			$('#links').append(a.replace('[name]', info[0]));
+		});
+
+		$('#links').collapse('toggle');
+	}
+
+	function generateSendAllLink() {
+		var scheme = getSmsUriScheme() ;
+		var phones = '';
+		data.map(function(info){
+			phones = phones + info[1] + ',';
+		});
+		var text =encodeURIComponent(getTextTemplate());
+		return scheme.replace('[text]', text).replace('[phone]', phones);
+	}
+
+	function updateSendAll() {
+		$('#sendall').attr('href', generateSendAllLink());
+	}
+
+	function validate() {
+		if (($('#myname').val().length > 0) && ($("#myphone").val().length > 0)) {
+			$("#sendone").removeClass('disabled');
+			$("#sendall").removeClass('disabled');
+			showTextTemplate();
+			// updateSendOne();
+			updateSendAll();
+		} else {
+			$("#sendone").addClass('disabled');
+			$("#sendall").addClass('disabled');	
+
+			$("#links").collapse('hide');
+			$('#preview').collapse('hide');
+		}
+	}
+
+	$('#myphone').keyup(validate);
+	$('#myname').keyup(validate);
+	$("#sendone").click(updateSendOne);
+
+	validate();
+
+	</script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </body>
 </html>
