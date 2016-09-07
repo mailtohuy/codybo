@@ -9,38 +9,59 @@
 </head>
 
 <body>
+<div class="container">
+	<header>
+		<h2>Call tree test</h2>
+	</header>
+</div>
 
-	<!-- Text inputs -->	
-	<div class="input-group">
-	  <span class="input-group-addon" id="basic-addon1">@</span>
-	  <input type="text" class="form-control" id="myname" placeholder="Enter your name" aria-describedby="basic-addon1">
-	</div>
+	<div class="container">
 
-	<div class="input-group">
-	  <span class="input-group-addon">#</span>
-	  <input type="text" class="form-control" id="myphone" placeholder="Enter your phone number" aria-describedby="basic-addon1">
-	</div>
+		<!-- Text inputs -->	
+		<div class="form-group">
+			<div class="input-group">
+			  <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-text-color" aria-hidden="true"></span></span>
 
-	<!-- Collapseable panel -->
-	<div class="collapse" id="preview">
-		<div class="panel panel-default" >
-		  <div class="panel-heading">The below message will be sent:</div>
-		  <div class="panel-body" ><i id="preview-text"></i></div>
+			  <input type="text" class="form-control" id="myname" placeholder="Your name" aria-describedby="basic-addon1">
+			</div>
+
+			<div class="input-group">
+			  <span class="input-group-addon"><span class="glyphicon glyphicon-phone-alt"></span></span>
+			  <input type="text" class="form-control" id="myphone" placeholder="Your phone number" aria-describedby="basic-addon1">
+			</div>
+		</div>
+
+		<!-- Collapseable panel -->
+		<div class="collapse" id="preview">
+			<div class="panel panel-default" >
+			  <div class="panel-heading">The below message will be sent</div>
+			  <div class="panel-body" >
+			  	<i id="preview-text"></i>
+			  </div>
+			</div>
 		</div>
 	</div>
 
-	<!-- Buttons -->
-	<a id="sendall" class="btn btn-primary btn-lg" role="button">
-	  <span class="glyphicon glyphicon-send" aria-hidden="true">
-	</a>
 
-	<a id="sendone" class="btn btn-primary btn-lg" role="button">
-	  <span class="glyphicon glyphicon-user" aria-hidden="true">
-	</a>
+	<!-- Buttons -->
+	<div class="container"> 
+		<div class="btn-group btn-group-justified">
+			<a id="sendall" class="btn btn-block btn-primary btn-lg" role="button">
+			  <span class="glyphicon glyphicon-send" aria-hidden="true">
+			</a>
+
+			<a id="sendone" class="btn btn-block btn-primary btn-lg" role="button">
+			  <span class="glyphicon glyphicon-user" aria-hidden="true">
+			</a>  
+		</div>
+	</div>
 
 	<!-- List for sendOne -->
-	<div class="list-group" id="links"></div>
-
+	<br/>
+	<div class="container">
+		<div class="list-group" id="links">
+		</div>
+	</div>
 
 	<script type="text/javascript">
 	var template = "Hi. This is [myname] on [time]. This is a test of the Call Tree. Please text me back at [myphone].";
