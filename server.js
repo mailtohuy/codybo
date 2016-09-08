@@ -100,8 +100,8 @@ server.post("/groupme", function(req,res) {
 	/* Save msg to database */
 	gm.receiveMessage(req.body);
 
-	/* Dispatch command */
-	gm.dispatch(req.body.text.toLowerCase());
+	/* Handle command */
+	gm.handle(req.body.text.toLowerCase());
 
 	// var cmd = req.body.text.toLowerCase().split(' '); //TODO: dissect command by key words, e.g "find (smirnoff vodka) near (m3n 2a7)" 
 	// if (cmd[0] == 'find') {
