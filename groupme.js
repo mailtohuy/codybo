@@ -22,11 +22,10 @@ module.exports.receiveMessage = function receiveMessage(msg) {
 
 		message.save(function (err) {
 			if (err) {
-				console.error(err);
+				console.error('receiveMessage - error while saving message');
 		  	} 
 
 			/* Close connection */
-			console.log()
 		  	db.connection.close()
 		}); //message.save
 	});
@@ -50,7 +49,7 @@ module.exports.postMessage = function postMessage(msg) {
 			console.log('groupme - postMessage - sent: ' + botResp + ' to ' + botID);
 		})
 		.catch( function(err) {
-			console.log('groupme - postMessage - error: ', err);
+			console.log('groupme - postMessage - error');
 		});
 }
 

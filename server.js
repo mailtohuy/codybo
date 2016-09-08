@@ -54,26 +54,7 @@ server.get("/lcbo-inventory", function(req,res) {
 	}
 });
 
-server.post("/groupme", function(req,res) {
 
-	console.log(JSON.stringify(req.body));
-
-	/* Save msg to database */
-	gm.receiveMessage(req.body);
-
-	/* Handle command */
-	gm.handle(req.body.text.toLowerCase());
-
-});
-
-process.on('SIGTERM', function () {
-    console.log('SIGTERM - codybo is closeing on port', server.get('PORT'));
-});
-
-
-server.listen(server.get('PORT'), function() {
-	console.log('codybo is running on port', server.get('PORT'));
-});
 
 
 	/* add handler for 'find pid near geo' */
@@ -111,3 +92,23 @@ gm.registerHandler(['find'], function(name) {
 }); // register 'find'
 
 
+server.post("/groupme", function(req,res) {
+
+	console.log(JSON.stringify(req.body));
+
+	/* Save msg to database */
+	gm.receiveMessage(req.body);
+
+	/* Handle command */
+	gm.handle(req.body.text.toLowerCase());
+
+});
+
+process.on('SIGTERM', function () {
+    console.log('SIGTERM - codybo is closeing on port', server.get('PORT'));
+});
+
+
+server.listen(server.get('PORT'), function() {
+	console.log('codybo is running on port', server.get('PORT'));
+});
