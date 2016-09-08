@@ -1,7 +1,16 @@
 var rp = require('request-promise');
 var mydb = require('./mydb.js');
-
 var botID = '2685810ad4b6e6c28e674d2ce2';
+var DispatcherClass = require('./dispatcher.js');
+var dispatcher = new DispatcherClass();
+
+module.exports.registerHandler = function(keywords, handlerFn) {
+	dispatcher.registerHandler(keywords,handlerFn);
+};
+
+module.exports.handle = function(command) {
+	return dispatcher.dispatch(command);
+};
 
 module.exports.receiveMessage = function receiveMessage(msg) {
 	var db = require('mongoose');
@@ -17,10 +26,11 @@ module.exports.receiveMessage = function receiveMessage(msg) {
 		  	} 
 
 			/* Close connection */
+			console.log()
 		  	db.connection.close()
 		}); //message.save
 	});
-}
+};
 
 module.exports.postMessage = function postMessage(msg) {
 	var botResp = msg;
