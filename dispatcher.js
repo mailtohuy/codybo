@@ -1,23 +1,30 @@
-
-var keywords = [];
-var handlers = {};
-
-function generateHandlerName(keywords) {
-	/* generate a handler name from its command keywords */
-	return keywords.sort().join('.');
+var Dispatcher = function() {
+	this.keywords = [];
+	this.handlers = {};
 }
 
-module.exports.registerHandler = function (keywords, handlerFn) {
-	var name = generateHandlerName(keywords);
+Dispatcher.prototype.generateHandlerName = function (words) {
+	/* generate a handler name from its command keywords */
+	return words.sort().join('.');
+}
 
-	if (handlers[name] != undefined) {
-		throw new Error(`registerHandle: handler '${name}' already exists!`);
+Dispatcher.prototype.registerHandler = function (keywords, handlerFn) {
+	var key = this.generateHandlerName(keywords);
+
+	if (handlerFn === undefined) {
+		console.log(`registerHandle: must specify a handler for '${key}'`);
+		throw new Error('no handler specified');
 	}
 
-	handlers[name] = {'keys' : keywords, 'handler': handlerFn};
+	/* add key words */ 
+	this.addKeywords(keywords);
+
+	/* register handler */
+	this.handlers[key] = {'keys' : keywords, 'handler': handlerFn};
 }
 
-module.exports.addKeywords = function(words) {
+Dispatcher.prototype.addKeywords = function(words) {
+	var keywords = this.keywords;
 	words.map(function (word) {
 		if (keywords.indexOf(word) < 0) {
 			/* add keywords if not already exists */
@@ -26,12 +33,15 @@ module.exports.addKeywords = function(words) {
 	});
 };
 
-module.exports.getKeywords = function() {
-	return keywords;
+Dispatcher.prototype.getKeywords = function() {
+	return this.keywords;
 };
 
-module.exports.parseCmd = function (cmd) {
-	keywords.map(function(key) {
+Dispatcher.prototype.parseCmd = function (cmd) {
+
+	cmd = cmd.trim();
+
+	this.keywords.map(function(key) {
 		cmd = cmd.replace(key, '|' + key + '|');
 	})
 	
@@ -55,19 +65,20 @@ module.exports.parseCmd = function (cmd) {
 	return result;
 };
 
-module.exports.dispatch = function (cmd) {
+Dispatcher.prototype.dispatch = function (cmd) {
 
 	var command = this.parseCmd(cmd);
-
-	var keywords = Object.keys(command);
-
-	var arguments = keywords.map(e => command[e]);
-
-	var handlerName = generateHandlerName(keywords);
+	var keys = Object.keys(command);
+	var arguments = keys.map(e => command[e]);
+	var handlers = this.handlers;
+	var handlerName = this.generateHandlerName(keys);
 
 	if (handlers[handlerName] == undefined) {
-		throw Error(`handlerName: no function registered to handle command '${cmd}'. Keywords: ${JSON.stringify(keywords)} `);
+		console.error(`handlerName: no handler for key: ${JSON.stringify(handlerName)} `)
+		throw Error('no handler');
 	}
 	// console.log(handlerName, handlers[handlerName]);
 	return handlers[handlerName].handler.apply(null, arguments);
 };
+
+module.exports = Dispatcher;

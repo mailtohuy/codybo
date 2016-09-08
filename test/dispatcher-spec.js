@@ -1,7 +1,8 @@
 var expect = require('chai').expect;
-var tools = require('../dispatcher.js');
+var Dispatcher = require('../dispatcher.js');
+var tools = new Dispatcher();
 
-describe("dispatcher", function() {
+describe("dispatcher-specs.js", function() {
 	var defaultKeywords = [];
 	var testKeywords = ['find', 'info', 'near'];
 
@@ -31,18 +32,40 @@ describe("dispatcher", function() {
 	});
 
 	/******* dispatch *******/
-	it ("dispatch 'add 2 and 3' should return 5", function(){
+	describe("dispatch()", function() {
 
-		/* set up keywords */
-		var keywords = ['add', 'and'];
-		tools.addKeywords(keywords);
+		it ("'add 2 and 3' should return 5", function(){
 
-		/* register handler */
-		tools.registerHandler(keywords, function(x,y) {return parseInt(x)+parseInt(y);});
+			/* set up keywords */
+			var keywords = ['add', 'and'];
 
-		/* invoke handler */
-		var output = tools.dispatch('add 2 and 3');
-		expect(output).to.equal(5);
+			/* register handler */
+			tools.registerHandler(keywords, function(x,y) {return parseInt(x)+parseInt(y);});
+
+			/* invoke handler */
+			var output = tools.dispatch('add 2 and 3');
+			expect(output).to.equal(5);
+
+		});
+
+		it ("should allow re-register handler for keywords", function(){
+			// re-register command handler
+			tools.registerHandler(['add', 'and'], function(/*pass no arg*/) {/*do nothing*/});
+			expect(tools.dispatch('add 2 and 3')).to.be.a('undefined');
+		});
+
+		it ("should not mind extra spaces in a command", function(){
+			tools.registerHandler(['a','b','c'], function(a,b,c) {
+				return a+b+c;
+			});
+			expect(tools.dispatch('a b c')).to.equal('');
+			expect(tools.dispatch('a    b     c')).to.equal('');
+			expect(tools.dispatch('a b  c    ')).to.equal('');
+			expect(tools.dispatch('   a b  c')).to.equal('');
+			expect(tools.dispatch('   a b  c    ')).to.equal('');
+		});
 
 	});
+
+
 });
