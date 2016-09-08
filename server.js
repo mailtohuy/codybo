@@ -54,37 +54,44 @@ server.get("/lcbo-inventory", function(req,res) {
 	}
 });
 
+ 	/* add handler for 'find pid near geo' */
+	gm.registerHandler(['find', 'near'], function(pid, geo) {
 
-// (function(gm) {
-// 	/* register the handlers for groupme service */
-// 	gm.dispatcher.addKeywords(['find', 'near', 'info']);
+		return lcbo.lookUpInventoryNearAddress(pid, geo) 
+		.then(function(results) { 
+			return results.splice(0,5) /* limit response to 5 records */
+			.map(store => store.name + ', qty: ' +  store.quantity) /* extract store names and quantities */
+			.join('.\n'); 
+		})
+		.then(txt => gm.postMessage(txt)); /* reply back */
 
-	
-// 	var formatStoreResults = function (results) {
+	}); // register 'find near'
 
-// 		var subset = results.splice(0,5); //limit response to 5 records.
 
-// 		subset.map(function (store) {
-// 			return store.name + ', quantity: ' +  store.quantity;
-// 		}).join('.\n'); 
 
-// 		return txt;
-// 	};
+	/* add handler for 'info' */
+	gm.registerHandler(['info'], function(ignore) {
+		gm.postMessage('find <name>: lists products with matching name\nfind <pid> near <address>: nearest stores where product is in stock');
+	}); // register 'info'
 
-// 	/* add handler for 'find pid near geo' */
-// 	gm.dispatcher.registerHandler(['find', 'near'], function(pid, geo) {
-// 		return lcbo.lookUpInventoryNearAddress(pid, geo)
-// 		.then(function(results) {
-// 			var txt = formatStoreResults(results);
-// 			gm.postMessage(txt);
-// 		}); 
-// 	}); // function(pid,geo)
 
-// 	/* add handler for 'info' */
-// 	gm.dispatcher.registerHandler(['info'], function(ignore) {
-// 		gm.postMessage('find <name>: lists products with matching name\nfind <pid> near <address>: nearest stores where product is in stock');
-// 	});
-// })(gm);
+
+	/* add handler for 'find product-name' */
+	gm.registerHandler(['find'], function(name) {
+
+		return lcbo.findProduct(name)
+		.then((results) => {
+			return results.splice(0,5) /* limit response to 5 records */
+			.map(function(product) {   /* extract product info */
+				return product.id + ', ' + product.name + ', $' + product.price_in_cents/100 ;
+			})
+			.join('.\n');
+
+		})
+		.then(function(txt) {
+			gm.postMessage(txt);       /* reply back */
+		});
+	}); // register 'find'
 
 server.post("/groupme", function(req,res) {
 
@@ -94,35 +101,34 @@ server.post("/groupme", function(req,res) {
 	gm.receiveMessage(req.body);
 
 	/* Dispatch command */
-	// var cmd = req.body.text.toLowerCase();
-	// gm.dispatch(cmd);
+	gm.dispatch(req.body.text.toLowerCase());
 
-	var cmd = req.body.text.toLowerCase().split(' '); //TODO: dissect command by key words, e.g "find (smirnoff vodka) near (m3n 2a7)" 
-	if (cmd[0] == 'find') {
-		lcbo.findProduct(cmd[1])
-		.then(function(results){
-			var txt = results.map(function(p) {
-				return p.id + ', ' + p.name + ', $' + p.price_in_cents/100 ;
-			}).join('.\n'); //TODO: limit response to 3 records.
+	// var cmd = req.body.text.toLowerCase().split(' '); //TODO: dissect command by key words, e.g "find (smirnoff vodka) near (m3n 2a7)" 
+	// if (cmd[0] == 'find') {
+	// 	lcbo.findProduct(cmd[1])
+	// 	.then(function(results){
+	// 		var txt = results.map(function(p) {
+	// 			return p.id + ', ' + p.name + ', $' + p.price_in_cents/100 ;
+	// 		}).join('.\n'); //TODO: limit response to 3 records.
 
-			gm.postMessage(txt);
-		});
-	}; // if cmd = 'find'
+	// 		gm.postMessage(txt);
+	// 	});
+	// }; // if cmd = 'find'
 
-	if (cmd[0] == 'near') {
-		lcbo.lookUpInventoryNearAddress(cmd[1], cmd[2])
-		.then(function(results) {
-			var txt = results.map(function(s) {
-				return s.name + ', quantity: ' +  s.quantity;
-			}).join('.\n'); //TODO: limit response to 3 records.
+	// if (cmd[0] == 'near') {
+	// 	lcbo.lookUpInventoryNearAddress(cmd[1], cmd[2])
+	// 	.then(function(results) {
+	// 		var txt = results.map(function(s) {
+	// 			return s.name + ', quantity: ' +  s.quantity;
+	// 		}).join('.\n'); //TODO: limit response to 3 records.
 
-			gm.postMessage(txt);
-		}) 
-	}; // if cmd = 'near'
+	// 		gm.postMessage(txt);
+	// 	}) 
+	// }; // if cmd = 'near'
 
-	if (cmd[0] == "info") {
-		gm.postMessage('find <name>: lists products with matching name\nfind <pid> near <address>: nearest stores where product is in stock');
-	};
+	// if (cmd[0] == "info") {
+	// 	gm.postMessage('find <name>: lists products with matching name\nfind <pid> near <address>: nearest stores where product is in stock');
+	// };
 });
 
 var port = server.get('PORT');
