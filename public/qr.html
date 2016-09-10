@@ -1,0 +1,85 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="qrcode-min.js"></script>
+</head>
+
+<body>
+<!-- with input that accepts one file -->
+<input id="the-file-input" type="file">
+<textarea id="the-file-content" placeholder="File content"></textarea>
+<div id="qrs"></div>
+<script type="text/javascript">
+$("#the-file-input").change(function() {
+	// will log a FileList object, view gifs below
+	console.log(this.files); /*files*/
+	var reader = new FileReader();
+	reader.onload = function(event) {
+		console.log(event);
+		var content = event.target.result;
+
+		if (content.startsWith('data')) { /* indicate use of readAsDataURL */
+			content = content.replace(/^data(.*)base64,/,"");
+		}
+
+		$("#the-file-content").val(content);
+		//$("#the-file-content").hide();
+
+		loadQR(content);
+	};
+
+	if ((this.files != undefined) && (this.files[0] != undefined)) {
+		reader.readAsDataURL(this.files[0]); // readAsDataURL base64-encode the file
+	}
+});
+
+function loadQR(what) {
+	function makeChunksOf(size) {
+
+		// var txt = encodeURIComponent(what);
+		var txt = what;
+
+		var result = [];
+
+		if (txt === undefined || txt.length === 0) {
+		return result;
+		}
+
+		var count = Math.ceil(txt.length / size);
+
+		for (var i=0; i < count; i++) {
+		k = i * size;
+		chunk = [ i, txt.substring(k, k + size) ];
+		result.push(chunk);
+		}
+
+		return result;
+	} // makeChunks
+
+	// var template = "<a href='#popup[index]' data-rel='popup' data-position-to='window' class='ui-btn ui-corner-all ui-shadow ui-btn-inline'>Photo [index]</a><div data-role='popup' id='popup[index]' class='photopopup' data-overlay-theme='a' data-corners='false' data-tolerance='30,15'><a href='#' data-rel='back' class='ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right'>Close</a><img src='https://api.qrserver.com/v1/create-qr-code/?size=400x40&data=[url]' alt='[index]'></div>";
+
+	// makeChunksOf(900).map( function ( [ id, txt ] ) {
+	// 	var element = template.replace(/\[index\]/g, id).replace(/\[url\]/g, txt);
+	// 	return $("#qrs").append(element); //console.log(element);
+	// });
+	start = Date.now();
+
+	makeChunksOf(2553).map( function ( [ id, txt ] ) {
+		var qr = qrcode(40, 'L');
+		qr.addData(txt);
+  		qr.make();
+		return $("#qrs").append(qr.createSvgTag());
+	});
+
+	end = Date.now();
+
+	console.log('Total time: ', end - start);
+} //loadQR
+</script>
+
+</body>
+</html>
