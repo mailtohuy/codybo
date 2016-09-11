@@ -1,18 +1,44 @@
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
-<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script src="qrcode-min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<style type="text/css">
+		@media print
+		{    
+		    img {
+				page-break-inside: avoid;
+			}
+		}
+	</style>
+
 </head>
 
 <body>
 <!-- with input that accepts one file -->
-<input id="the-file-input" type="file">
-<textarea id="the-file-content" placeholder="File content"></textarea>
-<div id="qrs"></div>
+<div class="container hidden-print">
+	<div class="container">
+		<div class="input-group input-group-lg">
+			<input id="the-file-input" class="form-control" type="file">
+			<textarea id="the-file-content" class="form-control hidden" placeholder="File content"></textarea>
+		</div>
+	</div>
+</div>
+
+<div id="qrs" class="container">
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="qrcode-min.js"></script>
+
 <script type="text/javascript">
 $("#the-file-input").change(function() {
 	// will log a FileList object, view gifs below
@@ -27,8 +53,6 @@ $("#the-file-input").change(function() {
 		}
 
 		$("#the-file-content").val(content);
-		//$("#the-file-content").hide();
-
 		loadQR(content);
 	};
 
@@ -37,48 +61,66 @@ $("#the-file-input").change(function() {
 	}
 });
 
+function initProgress(total) {
+	var increment = 100 / total;
+	var current = 0;
+	return {
+		increase : function () {
+			current += increment;
+			console.log('Progress: ' + Math.round(current) + ' %');
+		}
+	}
+}
+
+function chunk (arr, len) {
+
+	var chunks = [],
+		i = 0,
+		n = arr.length;
+
+	while (i < n) {
+		chunks.push(arr.slice(i, i += len));
+	}
+
+	return chunks;
+}
+
 function loadQR(what) {
-	function makeChunksOf(size) {
 
-		// var txt = encodeURIComponent(what);
-		var txt = what;
 
-		var result = [];
+	var chunks = chunk(what, 2560); //length of qrcode text = 2560
+	var groups = chunk(chunks, 2); // number of layout columns = 2
 
-		if (txt === undefined || txt.length === 0) {
-		return result;
-		}
+	console.log('Chunks: ', chunks.length);
 
-		var count = Math.ceil(txt.length / size);
+	$("#qrs").empty();
 
-		for (var i=0; i < count; i++) {
-		k = i * size;
-		chunk = [ i, txt.substring(k, k + size) ];
-		result.push(chunk);
-		}
-
-		return result;
-	} // makeChunks
-
-	// var template = "<a href='#popup[index]' data-rel='popup' data-position-to='window' class='ui-btn ui-corner-all ui-shadow ui-btn-inline'>Photo [index]</a><div data-role='popup' id='popup[index]' class='photopopup' data-overlay-theme='a' data-corners='false' data-tolerance='30,15'><a href='#' data-rel='back' class='ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right'>Close</a><img src='https://api.qrserver.com/v1/create-qr-code/?size=400x40&data=[url]' alt='[index]'></div>";
-
-	// makeChunksOf(900).map( function ( [ id, txt ] ) {
-	// 	var element = template.replace(/\[index\]/g, id).replace(/\[url\]/g, txt);
-	// 	return $("#qrs").append(element); //console.log(element);
-	// });
 	start = Date.now();
 
-	makeChunksOf(2553).map( function ( [ id, txt ] ) {
-		var qr = qrcode(40, 'L');
-		qr.addData(txt);
-  		qr.make();
-		return $("#qrs").append(qr.createSvgTag());
+	var progress = initProgress(chunks.length);
+
+	groups.map( function ( row ) {
+		function makeImgPromise(img) {
+			return new Promise(function(resolve, reject){
+				
+				var qr = qrcode(40, 'L');
+				qr.addData(img);
+				qr.make();
+				progress.increase();
+
+				resolve('<div class="col-xs-6 col-md-6">' + qr.createImgTag() + '</div>');
+			});
+		};
+		Promise.all(row.map(makeImgPromise))
+		.then(function(done){
+			$("#qrs").append('<div class="row">' + done.join('\n') + '</div>');	
+		})
 	});
 
-	end = Date.now();
 
-	console.log('Total time: ', end - start);
+	console.log('Total time: ', Date.now() - start);
 } //loadQR
+
 </script>
 
 </body>
