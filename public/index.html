@@ -22,13 +22,15 @@
 			};
 
 			storeCtlr.getSales = function(storeId) {
-				$http.get('https://codybo.herokuapp.com/lcbo/' + storeId)
-				.then(function(res) {
-						storeCtlr.sales[storeId] = res.data; 
+				if (storeCtlr.sales[storeId] == undefined) {
+					$http.get('https://codybo.herokuapp.com/lcbo/' + storeId)
+					.then(function(res) {
+							storeCtlr.sales[storeId] = res.data; 
 
-				}, function(err) {
-					console.log('Error while loading getSales');
-				}); // then				
+					}, function(err) {
+						console.log('Error while loading getSales');
+					}); // then				
+				}
 			};
 		}); // StoreController
 	</script>
@@ -43,6 +45,7 @@
 
  				<button ng-click="mc.getSales(s.id)">{{s.name}}</button> {{s.address_line_1}}, {{s.city}}, {{s.postal_code}}</span>
 				<div id="sales_{{s.id}}" ng-hide="mc.sales[s.id] == undefined">
+
 					<table class="table table-hover table-striped"> 
 						<tr> 
 							<th>Type</th>
@@ -70,10 +73,8 @@
 		</ul>
 
     </div>
-
 <!--
-
-    <div>
+    <div id="geolocator">
 		<p>10 stores nearest to your current position</p>
 		<img src="loading.gif" id="spin">
 		<div id="url" style="display: none;"> </div>
@@ -95,8 +96,6 @@
 			});
 		</script>    
     </div>
-
-
 -->
 	</body>
 </html>

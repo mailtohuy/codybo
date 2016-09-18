@@ -12,3 +12,5 @@ App.IndexRoute = Ember.Route.extend({
         return products;
     }
 });
+
+

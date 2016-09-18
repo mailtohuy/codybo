@@ -1,127 +1,215 @@
 <html>
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-
-	<style type="text/css">
-		@media print
-		{    
-		    img {
-				page-break-inside: avoid;
-			}
-		}
-	</style>
-
-</head>
-
-<body>
-<!-- with input that accepts one file -->
-<div class="container hidden-print">
-	<div class="container">
-		<div class="input-group input-group-lg">
-			<input id="the-file-input" class="form-control" type="file">
-			<textarea id="the-file-content" class="form-control hidden" placeholder="File content"></textarea>
-		</div>
-	</div>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <style type="text/css">
+            @media print {
+                img {
+                    page-break-inside: avoid;
+                }
+            }
+.img-responsive {
+margin: 0 auto;
+}
+        </style>
+    </head>
+    <body>
+        <!-- with input that accepts one file -->
+        <div class="container hidden-print">
+            <div class="container">
+                <div class="input-group input-group-lg">
+                    <input id="input" class="form-control" type="file">
+                    <textarea id="output" class="form-control" placeholder="Chunk counts"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+<div id="qrs" class="panel list-group">
+</div>
 </div>
 
-<div id="qrs" class="container">
+<!-- Latest compiled and minified JavaScript -->
+        <script src="./js/jquery.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/qrcode-min.js"></script>
+<script src="./js/dexie.js"></script>
+        <script type="text/javascript">
 
-</div>
+var db;
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="qrcode-min.js"></script>
+function openDb() {
+var db = new Dexie('qrdb');
 
-<script type="text/javascript">
-$("#the-file-input").change(function() {
-	// will log a FileList object, view gifs below
-	console.log(this.files); /*files*/
-	var reader = new FileReader();
-	reader.onload = function(event) {
-		console.log(event);
-		var content = event.target.result;
-
-		if (content.startsWith('data')) { /* indicate use of readAsDataURL */
-			content = content.replace(/^data(.*)base64,/,"");
-		}
-
-		$("#the-file-content").val(content);
-		loadQR(content);
-	};
-
-	if ((this.files != undefined) && (this.files[0] != undefined)) {
-		reader.readAsDataURL(this.files[0]); // readAsDataURL base64-encode the file
-	}
+db.open()
+.catch(function (err){
+if (err.name === "NoSuchDatabaseError") {
+db.version(1).stores({
+files : "++id, file, hash, time",
+codes : "fhash, phash, pcontent"
 });
+}
+});
+return db;
+}
+
+function content2Qrs(filename, content) {
+
+if (content.startsWith('data')) { /* indicate use of readAsDataURL */
+content = content.replace(/^data(.*)base64,/,"");
+}
+
+var chunks = chunk(content, 2560).map( e => [ e.hashCode() , e ]); //length of qrcode text = 2560
+
+$("#qrs").empty();
+var progressCounter = initProgress(chunks.length);
+var blob = new Blob([ '(' + getAllQRTags.toString() + ')()'] );
+
+// var worker = startWorker(blob, chunks);
+
+var numberOfWorkers = 4;
+var workers = chunk(chunks, chunks.length / numberOfWorkers).map( chunk => startWorker(blob, chunk) );
+
+}
+
+function getAllQRTags() {
+
+var baseUrl = '';
+
+//importScripts('C:/Users/Hugh/Desktop/src/qr/js/qrcode-min.js');
+
+function response(command, status, result) {
+if (!!result) {
+self.postMessage({'cmd': command, 'status': status, 'result': result});
+} else {
+self.postMessage({'cmd': command, 'status': status, 'result': void 0});
+}
+
+}
+
+self.onmessage = function(e) {
+var obj = e.data; //JSON.parse(e.data); //TODO: JSON.stringify before sending message from main thread
+var CMD = obj.cmd,
+ARGS = obj.args;
+
+switch (CMD) {
+case 'init':
+baseUrl = ARGS;
+response(CMD, 'done', baseUrl);
+break;
+case 'import':
+var scriptName = ARGS;
+var path = baseUrl + '/' + ARGS;
+try {
+importScripts(path);
+response(CMD, 'done', path);
+} catch (err) {
+response(CMD, 'fail', JSON.stringify(err));
+}
+break;
+case 'qr':
+
+var chunks = ARGS;
+chunks.map( function ( [hash, chunk] ) {
+var qr = qrcode(40, 'L');
+qr.addData(chunk);
+qr.make();
+response(CMD, 'done', {id: hash, img : qr.createImgTag()})
+} );
+
+break;
+default:
+response('unknown', 'done', e.data);
+break;
+} // switch
+}
+}
+
+function startWorker(blob, chunks) {
+var blobUrl = URL.createObjectURL(blob);
+var worker = new Worker(blobUrl);
+
+worker.onmessage = function (e) {
+switch(e.data.cmd) {
+case 'qr':
+var template = '<a href="#" class="list-group-item" data-toggle="collapse" data-target="#_id" data-parent="#qrs">_id</span></a> <div id="_id" class="sublinks collapse">_img</div>',
+img = e.data.result.img,
+id = e.data.result.id;
+$("#qrs").append(template.replace(/_img/, img).replace(/_id/g, id));
+break;
+default:
+console.log(e.data);
+break;
+} //switch
+}
+
+var path = window.location.href; // http://www.path.to/this/file.html
+path = path.split('/');
+path = path.splice(0, path.length - 1).join('/'); // http://www.path.to/this
+worker.postMessage({cmd: 'init', args: path});
+worker.postMessage({cmd: 'import', args: 'js/qrcode-min.js'});
+worker.postMessage({cmd: 'qr', args: chunks});
+
+return worker;
+}
 
 function initProgress(total) {
-	var increment = 100 / total;
-	var current = 0;
-	return {
-		increase : function () {
-			current += increment;
-			console.log('Progress: ' + Math.round(current) + ' %');
-		}
-	}
+var increment = 100 / total;
+var current = 0;
+return {
+increase : function () {
+current += increment;
+return 'Progress: ' + Math.round(current) + ' %';
+}
+}
 }
 
 function chunk (arr, len) {
 
-	var chunks = [],
-		i = 0,
-		n = arr.length;
+var chunks = [],
+i = 0,
+n = arr.length;
 
-	while (i < n) {
-		chunks.push(arr.slice(i, i += len));
-	}
-
-	return chunks;
+while (i < n) {
+chunks.push(arr.slice(i, i += len));
 }
 
-function loadQR(what) {
+return chunks;
+}
 
+function main() {
 
-	var chunks = chunk(what, 2560); //length of qrcode text = 2560
-	var groups = chunk(chunks, 2); // number of layout columns = 2
+// add hashCode to string.prototype
+String.prototype.hashCode = function(){
+var hash = 0,
+len = this.length;
+if (len == 0) return hash;
+for (i = 0; i < len; ++i) {
+hash = ((hash<<5)-hash)+ this.charCodeAt(i);
+hash &= hash; // Convert to 32bit integer
+}
+return (hash >>> 0);
+}
 
-	console.log('Chunks: ', chunks.length);
+// register Content2Qrs as handler
+$("#input").change(function() {
+var reader = new FileReader();
+var filename = this.files[0];
+reader.onload = function(event) {
+var content = event.target.result;
+content2Qrs(filename, content);
+};
 
-	$("#qrs").empty();
+if ((this.files != undefined) && (this.files[0] != undefined)) {
+reader.readAsDataURL(filename); // readAsDataURL base64-encode the file
+}
+});
+}
 
-	start = Date.now();
-
-	var progress = initProgress(chunks.length);
-
-	groups.map( function ( row ) {
-		function makeImgPromise(img) {
-			return new Promise(function(resolve, reject){
-				
-				var qr = qrcode(40, 'L');
-				qr.addData(img);
-				qr.make();
-				progress.increase();
-
-				resolve('<div class="col-xs-6 col-md-6">' + qr.createImgTag() + '</div>');
-			});
-		};
-		Promise.all(row.map(makeImgPromise))
-		.then(function(done){
-			$("#qrs").append('<div class="row">' + done.join('\n') + '</div>');	
-		})
-	});
-
-
-	console.log('Total time: ', Date.now() - start);
-} //loadQR
-
-</script>
-
-</body>
+main()
+        </script>
+    </body>
 </html>
