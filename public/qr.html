@@ -84,7 +84,7 @@
 	        updateProgress(current);
 	    }
 
-	    $('#' + progressBarId).text(total);
+	    $('#' + progressBarId).text(navigator.hardwareConcurrency + ' ' + total);
 
 	    return {
 	        increase : increaseIt
