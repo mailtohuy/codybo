@@ -1,215 +1,237 @@
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <style type="text/css">
-            @media print {
-                img {
-                    page-break-inside: avoid;
-                }
-            }
-.img-responsive {
-margin: 0 auto;
-}
-        </style>
-    </head>
-    <body>
-        <!-- with input that accepts one file -->
-        <div class="container hidden-print">
-            <div class="container">
-                <div class="input-group input-group-lg">
-                    <input id="input" class="form-control" type="file">
-                    <textarea id="output" class="form-control" placeholder="Chunk counts"></textarea>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-<div id="qrs" class="panel list-group">
-</div>
-</div>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+	<style type="text/css">
+	@media print {
+		img {
+			page-break-inside: avoid;
+		}
+	}
+	.img-responsive {
+		margin: 0 auto;
+	}
+	</style>
+</head>
+<body>
+	<!-- with input that accepts one file -->
+	<div class="container hidden-print">
+		<div class="container">
+			<div class="input-group input-group-lg">
+				<input id="input" class="form-control" type="file">
+				<textarea id="output" class="form-control" placeholder="Chunk counts"></textarea>
+			</div>
+		</div>
 
-<!-- Latest compiled and minified JavaScript -->
-        <script src="./js/jquery.min.js"></script>
-        <script src="./js/bootstrap.min.js"></script>
-        <script src="./js/qrcode-min.js"></script>
-<script src="./js/dexie.js"></script>
-        <script type="text/javascript">
 
-var db;
+		<div class="container">
+		    <div class="progress" id="progress" style="display: none;">
+		        <div id="progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+		        </div>
+		    </div>
+		</div>
 
-function openDb() {
-var db = new Dexie('qrdb');
 
-db.open()
-.catch(function (err){
-if (err.name === "NoSuchDatabaseError") {
-db.version(1).stores({
-files : "++id, file, hash, time",
-codes : "fhash, phash, pcontent"
-});
-}
-});
-return db;
-}
+	</div>
 
-function content2Qrs(filename, content) {
+	<div class="container">
+		<div id="qrs" class="panel list-group">
+		</div>
+	</div>
 
-if (content.startsWith('data')) { /* indicate use of readAsDataURL */
-content = content.replace(/^data(.*)base64,/,"");
-}
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="./js/jquery.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<script src="./js/qrcode-min.js"></script>
+	<!-- <script src="./js/dexie.js"></script> -->
+	<script type="text/javascript">
+	var progressBar;
+	var db;
 
-var chunks = chunk(content, 2560).map( e => [ e.hashCode() , e ]); //length of qrcode text = 2560
+	function openDb() {
+		var db = new Dexie('qrdb');
 
-$("#qrs").empty();
-var progressCounter = initProgress(chunks.length);
-var blob = new Blob([ '(' + getAllQRTags.toString() + ')()'] );
+		db.open()
+		.catch(function (err){
+			if (err.name === "NoSuchDatabaseError") {
+				db.version(1).stores({
+					files : "++id, file, hash, time",
+					codes : "fhash, phash, pcontent"
+				});
+			}
+		});
+		return db;
+	}
 
-// var worker = startWorker(blob, chunks);
+	function initProgressBar(progressId, progressBarId, total) {
+	    var increment = 100 /total;
+	    var current = 0;
 
-var numberOfWorkers = 4;
-var workers = chunk(chunks, chunks.length / numberOfWorkers).map( chunk => startWorker(blob, chunk) );
+	    function updateProgress(val) {
+	        if (val > 0) {
+	            $('#' + progressId).show();
+	        }
 
-}
+	        $('#' + progressBarId).attr('aria-valuenow', val).css('width', val + '%');
+	    }
 
-function getAllQRTags() {
+	    function increaseIt() {
+	        current += increment;
+	        updateProgress(current);
+	    }
 
-var baseUrl = '';
+	    return {
+	        increase : increaseIt
+	    }
+	} // initProgressBar
 
-//importScripts('C:/Users/Hugh/Desktop/src/qr/js/qrcode-min.js');
 
-function response(command, status, result) {
-if (!!result) {
-self.postMessage({'cmd': command, 'status': status, 'result': result});
-} else {
-self.postMessage({'cmd': command, 'status': status, 'result': void 0});
-}
+	function content2Qrs(filename, content) {
 
-}
+		if (content.startsWith('data')) { /* indicate use of readAsDataURL */
+			content = content.replace(/^data(.*)base64,/,"");
+		}
 
-self.onmessage = function(e) {
-var obj = e.data; //JSON.parse(e.data); //TODO: JSON.stringify before sending message from main thread
-var CMD = obj.cmd,
-ARGS = obj.args;
+		var chunks = chunk(content, 2560).map( e => [ e.hashCode() , e ]); //length of qrcode text = 2560
 
-switch (CMD) {
-case 'init':
-baseUrl = ARGS;
-response(CMD, 'done', baseUrl);
-break;
-case 'import':
-var scriptName = ARGS;
-var path = baseUrl + '/' + ARGS;
-try {
-importScripts(path);
-response(CMD, 'done', path);
-} catch (err) {
-response(CMD, 'fail', JSON.stringify(err));
-}
-break;
-case 'qr':
+		$("#qrs").empty();
 
-var chunks = ARGS;
-chunks.map( function ( [hash, chunk] ) {
-var qr = qrcode(40, 'L');
-qr.addData(chunk);
-qr.make();
-response(CMD, 'done', {id: hash, img : qr.createImgTag()})
-} );
+		progressBar = initProgressBar('progress', 'progress-bar', chunks.length);
 
-break;
-default:
-response('unknown', 'done', e.data);
-break;
-} // switch
-}
-}
+		var blob = new Blob([ '(' + getAllQRTags.toString() + ')()'] );
+
+		// var worker = startWorker(blob, chunks);
+
+		var numberOfWorkers = 4;
+		var workers = chunk(chunks, chunks.length / numberOfWorkers).map( chunk => startWorker(blob, chunk) );
+
+	}
+
+	function getAllQRTags() {
+
+		var baseUrl = '';
+
+		function response(command, status, result) {
+			if (!!result) {
+				self.postMessage({'cmd': command, 'status': status, 'result': result});
+			} else {
+				self.postMessage({'cmd': command, 'status': status, 'result': void 0});
+			}
+
+		}
+
+		self.onmessage = function(e) {
+			var obj = e.data; //JSON.parse(e.data); //TODO: JSON.stringify before sending message from main thread
+			var CMD = obj.cmd,
+			ARGS = obj.args;
+
+			switch (CMD) {
+				case 'init':
+					baseUrl = ARGS;
+					response(CMD, 'done', baseUrl);
+					break;
+				case 'import':
+					var scriptName = ARGS;
+					var path = baseUrl + '/' + ARGS;
+					try {
+						importScripts(path);
+						response(CMD, 'done', path);
+					} catch (err) {
+						response(CMD, 'fail', JSON.stringify(err));
+					}
+					break;
+				case 'qr':
+					var chunks = ARGS;
+					chunks.map( function ( [hash, chunk] ) {
+						var qr = qrcode(40, 'L');
+						qr.addData(chunk);
+						qr.make();
+						response(CMD, 'done', {id: hash, img : qr.createImgTag()})
+					} );
+					break;
+				default:
+					response('unknown', 'done', e.data);
+					break;
+			} // switch
+		} // self.onmessage
+	} // getAllQRTags
 
 function startWorker(blob, chunks) {
-var blobUrl = URL.createObjectURL(blob);
-var worker = new Worker(blobUrl);
+	var blobUrl = URL.createObjectURL(blob);
+	var worker = new Worker(blobUrl);
 
-worker.onmessage = function (e) {
-switch(e.data.cmd) {
-case 'qr':
-var template = '<a href="#" class="list-group-item" data-toggle="collapse" data-target="#_id" data-parent="#qrs">_id</span></a> <div id="_id" class="sublinks collapse">_img</div>',
-img = e.data.result.img,
-id = e.data.result.id;
-$("#qrs").append(template.replace(/_img/, img).replace(/_id/g, id));
-break;
-default:
-console.log(e.data);
-break;
-} //switch
-}
+	worker.onmessage = function (e) {
+		switch(e.data.cmd) {
+			case 'qr':
+				var template = '<a href="#" class="list-group-item" data-toggle="collapse" data-target="#_id" data-parent="#qrs">_id</span></a> <div id="_id" class="sublinks collapse">_img</div>',
+				img = e.data.result.img,
+				id = e.data.result.id;
+				$("#qrs").append(template.replace(/_img/, img).replace(/_id/g, id));
+				progressBar.increase(); // global var
+				break;
+			default:
+			console.log(e.data);
+			break;
+		} //switch
+	} // onmessage
 
-var path = window.location.href; // http://www.path.to/this/file.html
-path = path.split('/');
-path = path.splice(0, path.length - 1).join('/'); // http://www.path.to/this
-worker.postMessage({cmd: 'init', args: path});
-worker.postMessage({cmd: 'import', args: 'js/qrcode-min.js'});
-worker.postMessage({cmd: 'qr', args: chunks});
+	var path = window.location.href; // http://www.path.to/this/file.html
+	path = path.split('/');
+	path = path.splice(0, path.length - 1).join('/'); // http://www.path.to/this
+	worker.postMessage({cmd: 'init', args: path});
+	worker.postMessage({cmd: 'import', args: 'js/qrcode-min.js'});
+	worker.postMessage({cmd: 'qr', args: chunks});
 
-return worker;
-}
-
-function initProgress(total) {
-var increment = 100 / total;
-var current = 0;
-return {
-increase : function () {
-current += increment;
-return 'Progress: ' + Math.round(current) + ' %';
-}
-}
-}
+	return worker;
+} // start worker
 
 function chunk (arr, len) {
 
-var chunks = [],
-i = 0,
-n = arr.length;
+	var chunks = [],
+	i = 0,
+	n = arr.length;
 
-while (i < n) {
-chunks.push(arr.slice(i, i += len));
+	while (i < n) {
+		chunks.push(arr.slice(i, i += len));
+	}
+
+	return chunks;
 }
 
-return chunks;
-}
+	function main() {
 
-function main() {
+		// add hashCode to string.prototype
+		String.prototype.hashCode = function(){
+			var hash = 0,
+			len = this.length;
+			if (len == 0) return hash;
+			for (i = 0; i < len; ++i) {
+				hash = ((hash<<5)-hash)+ this.charCodeAt(i);
+				hash &= hash; // Convert to 32bit integer
+			}
+			return (hash >>> 0);
+		} // hashCode
 
-// add hashCode to string.prototype
-String.prototype.hashCode = function(){
-var hash = 0,
-len = this.length;
-if (len == 0) return hash;
-for (i = 0; i < len; ++i) {
-hash = ((hash<<5)-hash)+ this.charCodeAt(i);
-hash &= hash; // Convert to 32bit integer
-}
-return (hash >>> 0);
-}
+		// register Content2Qrs to handle #input change
+		$("#input").change(function() {
+			var reader = new FileReader();
+			var file = this.files[0];
+			reader.onload = function(event) {
+				var content = event.target.result;
+				content2Qrs(file.name, content);
+			};
 
-// register Content2Qrs as handler
-$("#input").change(function() {
-var reader = new FileReader();
-var filename = this.files[0];
-reader.onload = function(event) {
-var content = event.target.result;
-content2Qrs(filename, content);
-};
+			if (!!this.files && !!this.files[0]) {
+				reader.readAsDataURL(file); // readAsDataURL base64-encode the file
+			}
+		});
+	} // main
 
-if ((this.files != undefined) && (this.files[0] != undefined)) {
-reader.readAsDataURL(filename); // readAsDataURL base64-encode the file
-}
-});
-}
-
-main()
-        </script>
-    </body>
+	main()
+</script>
+</body>
 </html>
