@@ -76,12 +76,15 @@
 	        }
 
 	        $('#' + progressBarId).attr('aria-valuenow', val).css('width', val + '%');
+
 	    }
 
 	    function increaseIt() {
 	        current += increment;
 	        updateProgress(current);
 	    }
+
+	    $('#' + progressBarId).text(total);
 
 	    return {
 	        increase : increaseIt
