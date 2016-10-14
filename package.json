@@ -7,13 +7,15 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "push": "git push heroku master"
   },
   "dependencies": {
     "body-parser": "1.15.2",
     "cheerio": "^0.20.0",
     "cors": "2.7.1",
     "express": "^4.9.8",
+    "hget": "3.0.1",
     "mongoose": "^4.5.8",
     "request-promise": "4.1.1"
   },
@@ -31,5 +33,8 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/mailtohuy/codybo/issues"
+  },
+  "devDependencies": {
+    "chai": "3.5.0"
   }
 }
