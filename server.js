@@ -16,7 +16,9 @@ server.use(express.static(__dirname + '/public'));
 server.use(bodyParser.json());
 
 server.get("/p/:encodedUrl", function(req, res) {
-	var url = decodeURIComponent(req.params.encodedUrl);
+	// var url = decodeURIComponent(req.params.encodedUrl);
+	var url = new Buffer(req.params.encodedUrl, 'base64').toString('ascii');
+
 	rp(url)
 	// .then( html => new Buffer(html).toString('base64'))
 	.then( txt => res.send(txt))
@@ -24,7 +26,9 @@ server.get("/p/:encodedUrl", function(req, res) {
 });
 
 server.get("/ep/:encodedUrl", function(req, res) {
-	var url = decodeURIComponent(req.params.encodedUrl);
+	// var url = decodeURIComponent(req.params.encodedUrl);
+	var url = new Buffer(req.params.encodedUrl, 'base64').toString('ascii');
+
 	console.time(`El Pais: ${url}`);
 	rp(url)
 	.then( html => hget(html, {
@@ -33,10 +37,10 @@ server.get("/ep/:encodedUrl", function(req, res) {
 		ignore: '.videonoticia,.articulo-tags,.articulo-apoyos,.articulo-extras'
 	}))
 	.then( md => {
-		res.send(md);
+		res.send('<textarea style="margin: 0px; width: 1000px; height: 600px;">' + md + '</textarea>');
 		console.timeEnd(`El Pais: ${url}`);
 	})
-	.catch( err => res.send('oops'));
+	.catch( err => res.send(err));
 
 });
 
