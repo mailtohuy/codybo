@@ -32,7 +32,7 @@
 		</div>
 
 		<!-- Collapseable panel -->
-		<div class="collapse" id="preview">
+		<div id="preview">
 			<div class="panel panel-default" >
 			  <div class="panel-heading">The below message will be sent</div>
 			  <div class="panel-body" >
@@ -46,12 +46,13 @@
 	<!-- Buttons -->
 	<div class="container"> 
 		<div class="btn-group btn-group-justified">
+			<!--
 			<a id="sendall" class="btn btn-block btn-primary btn-lg" role="button">
 			  <span class="glyphicon glyphicon-send" aria-hidden="true">
 			</a>
-
+			-->
 			<a id="sendone" class="btn btn-block btn-primary btn-lg" role="button">
-			  <span class="glyphicon glyphicon-user" aria-hidden="true">
+			  <span class="glyphicon glyphicon-send" aria-hidden="true">
 			</a>  
 		</div>
 	</div>
@@ -131,7 +132,7 @@
 			$('#links').append(a.replace('[name]', info[0]));
 		});
 
-		$('#links').collapse('toggle');
+		//$('#links').collapse('toggle');
 	}
 
 	function generateSendAllLink() {
@@ -153,12 +154,11 @@
 			$("#sendone").removeClass('disabled');
 			$("#sendall").removeClass('disabled');
 			showTextTemplate();
-			// updateSendOne();
+			updateSendOne();
 			updateSendAll();
 		} else {
 			$("#sendone").addClass('disabled');
 			$("#sendall").addClass('disabled');	
-
 			$("#links").collapse('hide');
 			$('#preview').collapse('hide');
 		}
@@ -169,6 +169,8 @@
 	$("#sendone").click(updateSendOne);
 
 	validate();
+	$('#links').collapse('toggle');	
+	
 
 	</script>
 	<!-- Latest compiled and minified JavaScript -->
