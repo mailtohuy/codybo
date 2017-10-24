@@ -86,7 +86,8 @@ function saveToFile(content, file_name) {
 }
 
 Promise.all(
-    [ 10, 217, 1, 38, 187, 164, 355, 149, 367, 346 ]
+    //[ 10, 217, 1, 38, 187, 164, 355, 149, 367, 346 ]
+    [ 10 ]
     .map(getProductsByStore)
 ).then(all_products => saveToFile(all_products.reduce((a,b)=>a.concat(b), []), out_file));
 
