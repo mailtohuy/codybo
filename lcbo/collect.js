@@ -3,7 +3,7 @@ const _ = require('underscore');
 const fs = require('fs');
 
 const product_url = 'https://lcboapi.com/products?access_key=MDpkNzE1NTI2ZS0xOWUyLTExZTYtOGVlMi03N2U2MGFjMTAzMjY6QVdzWGpYUFQweW9uejFmRUZjYkNzcVhicE5UWktXQWdna0cz&per_page=50&store_id=';
-const file_base = '/projects/project1';
+const file_base = './';
 //const out_file = `${file_base}/${(new Date())/1E3|0}.csv`;
 const out_file = `${file_base}/inventories.csv`;
 
