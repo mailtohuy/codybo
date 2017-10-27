@@ -25,7 +25,7 @@ after=$(wc -l inventories.csv)
 if [ "$before" != "$after" ]; then
 	echo "$after"
 	echo "Inventories updated!"
-	git commit inventories.csv -m "[daily.sh] Updated inventories on $(date)" 2>&1 >/dev/null
+	git commit inventories.csv -m "[daily.sh] Updated inventories on $(TZ='America/Toronto' date)" 2>&1 >/dev/null
 	git push origin master 2>&1 >/dev/null
 	if [ $? -eq 0 ]
 	then
