@@ -10,7 +10,8 @@ mv t.csv inventories.csv
 after=$(wc -l inventories.csv)
 if [ "$before" != "$after" ]; then
 	echo "$after"
-	git commit inventories.csv -m "Updated inventories on $(date)"
+	git commit inventories.csv -m "[daily.sh] Updated inventories on $(date)"
+	git push origin master
 	echo "Inventories updated!"
 else
 	echo "No change in inventories!"
