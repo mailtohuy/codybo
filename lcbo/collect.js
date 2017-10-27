@@ -1,11 +1,12 @@
 const https = require('https');
 const _ = require('underscore');
 const fs = require('fs');
+const config = require('./config.js'); 
 
-const access_key = 'MDpkNzE1NTI2ZS0xOWUyLTExZTYtOGVlMi03N2U2MGFjMTAzMjY6QVdzWGpYUFQweW9uejFmRUZjYkNzcVhicE5UWktXQWdna0cz';
-const product_url = `https://lcboapi.com/products?access_key=${access_key}&per_page=100&store_id=`;
-const file_base = '.';
-const out_file = `${file_base}/inventories.csv`;
+const access_key = config.access_key;
+const product_url = config.product_url; 
+const out_file = config.out_file;
+const store_list = config.stores;
 
 function get(url) {
     return new Promise((resolve, reject)=>{
@@ -86,9 +87,7 @@ function saveToFile(content, file_name) {
 }
 
 Promise.all(
-    //[ 10, 217, 1, 38, 187, 164, 355, 149, 367, 346 ]
-      [ 10, 217, 1, 38 ]
-    .map(getProductsByStore)
+     store_list.map(getProductsByStore)
 ).then(all_products => saveToFile(all_products.reduce((a,b)=>a.concat(b), []), out_file));
 
 /*
