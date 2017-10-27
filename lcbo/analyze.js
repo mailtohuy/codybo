@@ -7,6 +7,7 @@ function load_inventory(file) {
 			if (err) throw err;
 			try {
 				let data = _.chain(raw.split('\n'))
+					.filter(row => row.length > 1) /* remove empty lines */
 					.map(row => _.object(['product_id','store_id','quantity','price','updated_on'], JSON.parse(row)))
 //		 			.tap(console.log)
 					.value();
