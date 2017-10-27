@@ -1,12 +1,16 @@
 #!/bin/bash
 before=$(wc -l inventories.csv)
 echo "$before"
-node collect.js > /dev/null
+cp inventories.csv inventories.csv.bk
+node collect.js 2> /dev/null
 sort inventories.csv|uniq > t.csv
-rm -f inventories.csv
 mv t.csv inventories.csv
 after=$(wc -l inventories.csv)
-echo "$after"
 if [ "$before" != "$after" ]; then
+	echo "$after"
 	git commit inventories.csv -m "Updated inventories on $(date)"
+	echo "Inventories updated!"
+else
+	echo "No change in inventories!"
 fi
+rm -f inventories.csv.bk
