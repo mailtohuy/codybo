@@ -1,10 +1,10 @@
 const https = require('https');
 const _ = require('underscore');
 const fs = require('fs');
-const config = require('./config.js'); 
+const config = require('./config.js');
 
 const access_key = config.access_key;
-const product_url = config.product_url; 
+const product_url = config.product_url;
 const out_file = config.out_file;
 const store_list = config.stores;
 
@@ -21,13 +21,13 @@ function get(url) {
 //                    console.debug(`[INFO] got ${data.result.length} records from ${url.slice(url.indexOf('store_id'))}`) ;
                     resolve(data);
                 } catch (e) {
-                    console.error(`[ERR] no JSON: ${url.slice(url.indexOf('store_id'))}`);
+                    // console.error(`[ERR] no JSON: ${url.slice(url.indexOf('store_id'))}`);
                     resolve([]);
                 }
             });
 
         }).on('error', (err) => {
-            console.error(`[ERROR] get: ${url}\n${err}`);
+            // console.error(`[ERROR] get: ${url}\n${err}`);
             resolve([]);
         });
 });
@@ -37,6 +37,8 @@ function getAll(base_url) {
     return new Promise((resolve, reject)=>{
         get(base_url)
         .then((res)=>{
+
+            // console.time(`${base_url.slice(base_url.indexOf('store_id'))}`);
 
             let pages =_.range(res.pager.total_pages) /* NOTE change this to 1 for testing */
                         .map(index => base_url + `&page=${index+1}`)
@@ -48,6 +50,7 @@ function getAll(base_url) {
                               .filter(page => page.result != undefined)  // filter out empty page, i.e. without 'result' section
                               .reduce((a,b)=>a.concat(b.result), []); // extract the 'result' section of each page
 //                console.log(`[INFO] getAll: ${records.length} records in total`);
+                // console.timeEnd(`${base_url.slice(base_url.indexOf('store_id'))}`);
                 resolve(records); /* Note: 'return' does not work! */
             });
         }) /* get(url).then */
@@ -59,7 +62,7 @@ function getAll(base_url) {
 function getProductsByStore(storeNumber) {
     let base_url = product_url + storeNumber;
 
-    console.info(`[INFO] getProductsByStore: Fetching from store ${storeNumber}`);
+    // console.info(`[INFO] getProductsByStore: Fetching from store ${storeNumber}`);
 
     return getAll(base_url)
     .then(products => {
@@ -82,7 +85,7 @@ function saveToFile(content, file_name) {
 
     fs.appendFile(file_name, data, 'utf8', (err) => {
         if (err) throw err;
-        console.info(`[INFO] saveToFile: ${file_name} done!`);
+        // console.info(`[INFO] saveToFile: ${file_name} done!`);
     });
 }
 
