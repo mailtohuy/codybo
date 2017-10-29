@@ -3,15 +3,14 @@
 # count lines and size of inventory before update
 before=$(wc -l inventories.csv)
 before_size=$(ls -lh inventories.csv | awk '{print $5}')
-echo "$before"
 
 # make a back up of inventory in case things fail
 cp inventories.csv inventories.csv.bk
 
-# update inventory 
-node collect.js > /dev/null
+# update inventory
+node collect.js 2> /dev/null
 
-# get size of inventory right after update to calculate size of downloaded data 
+# get size of inventory right after update to calculate size of downloaded data
 after_size=$(ls -lh inventories.csv | awk '{print $5}')
 
 # remove duplicates from inventory
@@ -23,25 +22,27 @@ after=$(wc -l inventories.csv)
 
 # commit the new inventory to github
 if [ "$before" != "$after" ]; then
-	echo "$after"
-	echo "Inventories updated!"
-	git commit inventories.csv -m "[daily.sh] Updated inventories on $(TZ='America/Toronto' date)" 2>&1 >/dev/null
-	git push origin master 2>&1 >/dev/null
-	if [ $? -eq 0 ]
-	then
-	   echo "Inventories saved to github !"
-	   
-	   # delete the backup file
-       rm -f inventories.csv.bk
-	else
-	   echo "Err: Inventories not saved to github !"
-	fi		
+		echo "No of products before update: $before"
+		echo "No of products after update: $after"
+		echo "Inventories updated!"
+		git commit inventories.csv -m "[daily.sh] Updated inventories on $(TZ='America/Toronto' date)" 2>&1 >/dev/null
+		git push origin master 2>&1 >/dev/null
+		if [ $? -eq 0 ]
+		then
+			   echo "Inventories saved to github !"
+
+			   # delete the backup file
+		     rm -f inventories.csv.bk
+		else
+			   echo "Err: Inventories not saved to github !"
+		fi
 else
-	echo "No change in inventories!"
-	
+		echo "No of products before update: $before"
+		echo "No change in inventories!"
+
     # delete the backup file
     rm -f inventories.csv.bk
 fi
 
 # display size of downloaded data
-echo "Data downloaded = $after_size - $before_size"
+echo "Data downloaded: $after_size - $before_size"
