@@ -2,7 +2,7 @@
 
 # count lines and size of inventory before update
 before=$(wc -l inventories.csv)
-before_size=$(ls -lh inventories.csv | awk '{print $5}')
+before_size=$(stat -c '%s' inventories.csv)
 
 # make a back up of inventory in case things fail
 cp inventories.csv inventories.csv.bk
@@ -11,7 +11,7 @@ cp inventories.csv inventories.csv.bk
 node collect.js 2> /dev/null
 
 # get size of inventory right after update to calculate size of downloaded data
-after_size=$(ls -lh inventories.csv | awk '{print $5}')
+after_size=$(stat -c '%s' inventories.csv)
 
 # remove duplicates from inventory
 sort inventories.csv|uniq > t.csv
@@ -25,8 +25,8 @@ if [ "$before" != "$after" ]; then
 		echo "No of products before update: $before"
 		echo "No of products after update: $after"
 		echo "Inventories updated!"
-		git commit inventories.csv -m "[daily.sh] Updated inventories on $(TZ='America/Toronto' date)" 2>&1 >/dev/null
-		git push origin master 2>&1 >/dev/null
+		#git commit inventories.csv -m "[daily.sh] Updated inventories on $(TZ='America/Toronto' date)" 2>&1 >/dev/null
+		#git push origin master 2>&1 >/dev/null
 		if [ $? -eq 0 ]
 		then
 			   echo "Inventories saved to github !"
@@ -45,4 +45,4 @@ else
 fi
 
 # display size of downloaded data
-echo "Data downloaded: $after_size - $before_size"
+echo "Data downloaded: $(( ($after_size - $before_size)/1048576 )) MB" 
