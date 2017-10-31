@@ -45,4 +45,4 @@ else
 fi
 
 # display size of downloaded data
-echo "Data downloaded: $(( ($after_size - $before_size)/1048576 )) MB" 
+echo "Mobile data used: $(( $after_size - $before_size )) bytes" 
