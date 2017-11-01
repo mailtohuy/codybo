@@ -40,17 +40,15 @@ function getAll(base_url) {
 
 //             console.time(`${base_url.slice(base_url.indexOf('store_id'))}`);
 
-            let pageRequests =_.range(2) //res.pager.total_pages) /* NOTE change this to 1 for testing */
+            let pageRequests =_.range(res.pager.total_pages) /* NOTE change this to 1 for testing */
                         .map(index => base_url + `&page=${index+1}`)
                         .map(url => () => get(url));
 
-            pageRequests.reduce((all_pages, request)=>all_pages.then(request().then(Array.prototype.concat.bind(all_pages))) ,Promise.resolve([]))
+            pageRequests.reduce((all_pages, request)=>all_pages.then(pages=>request().then(Array.prototype.concat.bind(pages))) ,Promise.resolve([]))
             .then(all_pages=>{
-                
                 let records = all_pages
                               .filter(page => page.result != undefined)  // filter out empty page, i.e. without 'result' section
-                              .reduce((a,b)=>a.concat(b.result), []); // extract the 'result' section of each page
-                
+                              .reduce((a,b)=>a.concat(b.result), []); // extract the 'result' section of each page               
                 
 //                 console.timeEnd(`${base_url.slice(base_url.indexOf('store_id'))}`);
                 
@@ -59,19 +57,6 @@ function getAll(base_url) {
                 resolve(records); /* Note: 'return' does not work! */
             });
 
-//             let pages =_.range(res.pager.total_pages) /* NOTE change this to 1 for testing */
-//                         .map(index => base_url + `&page=${index+1}`)
-//                         .map(url => get(url));
-//
-//             Promise.all(pages)
-//             .then(all_pages=>{
-//                 let records = all_pages
-//                               .filter(page => page.result != undefined)  // filter out empty page, i.e. without 'result' section
-//                               .reduce((a,b)=>a.concat(b.result), []); // extract the 'result' section of each page
-// //                console.log(`[INFO] getAll: ${records.length} records in total`);
-//                 // console.timeEnd(`${base_url.slice(base_url.indexOf('store_id'))}`);
-//                 resolve(records); /* Note: 'return' does not work! */
-//             });
         }) /* get(url).then */
         .catch(err=>reject(err));
     });
@@ -81,7 +66,7 @@ function getAll(base_url) {
 function getProductsByStore(storeNumber) {
     let base_url = product_url + storeNumber;
 
-    // console.info(`[INFO] getProductsByStore: Fetching from store ${storeNumber}`);
+    console.info(`[INFO] getProductsByStore: Fetching from store ${storeNumber}`);
 
     return getAll(base_url)
     .then(products => {
@@ -97,12 +82,8 @@ function getProductsByStore(storeNumber) {
     }); /* getAll */
 }
 
-function saveToFile(content, file_name) {
-    let data = '\n' + content
-              .map(row=>JSON.stringify(row))
-              .join('\n');
-
-    fs.appendFile(file_name, data, 'utf8', (err) => {
+function saveToFile(text_content, file_name) {
+    fs.appendFile(file_name, text_content, 'utf8', (err) => {
         if (err) throw err;
         // console.info(`[INFO] saveToFile: ${file_name} done!`);
     });
@@ -111,7 +92,11 @@ function saveToFile(content, file_name) {
 
 store_list.map(store => () => getProductsByStore(store))
 .reduce((all_stores, getProducts) => all_stores.then(all_products => getProducts().then(Array.prototype.concat.bind(all_products))), Promise.resolve([]))
-.then(all_products => saveToFile(all_products.reduce((a,b)=>a.concat(b), []), out_file));
+.then(all_products => {
+    let content = '\n' + all_products.map(row=>JSON.stringify(row)).join('\n');
+    saveToFile(content, out_file)
+    
+});
 
 /*
  * TODO:
