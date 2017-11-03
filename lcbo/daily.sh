@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#echo current date
+date
+
 # count lines and size of inventory before update
 before=$(wc -l inventories.csv)
 before_size=$(stat -c '%s' inventories.csv)
