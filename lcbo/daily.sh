@@ -8,9 +8,9 @@ date
 
 before=$(wc -l inventories.csv)
 
-if [ "$(os)" == "Linux" ]; then
+if [ "$os" == "Linux" ]; then
 	before_size=$(stat -c '%s' inventories.csv 2>/dev/null)
-elif [[ "$(os)" == "Darwin" ]]; then
+elif [[ "$os" == "Darwin" ]]; then
 	before_size=$(stat -f '%z' inventories.csv 2>/dev/null)
 fi
 
@@ -22,9 +22,9 @@ node collect.js 2> /dev/null
 
 # get size of inventory right after update to calculate size of downloaded data
 
-if [ "$(os)" == "Linux" ]; then
+if [ "$os" == "Linux" ]; then
 	after_size=$(stat -c '%s' inventories.csv 2>/dev/null)
-elif [[ "$(os)" == "Darwin" ]]; then
+elif [[ "$os" == "Darwin" ]]; then
 	after_size=$(stat -f '%z' inventories.csv 2>/dev/null)
 fi
 
