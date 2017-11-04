@@ -32,9 +32,9 @@ load_inventory('./inventories.csv')
 	//
 	// console.timeEnd('groupBy');
 
-	console.time('reduce');
+	console.time('products_by_store');
 
-	let a = data.reduce((bin, elm) => {
+	let products_by_store = data.reduce((bin, elm) => {
 		let storeId = elm[1],
 				productId = elm[0],
 				quantity = elm[2],
@@ -50,16 +50,55 @@ load_inventory('./inventories.csv')
     };
 
     bin[storeId][productId].push([quantity, updated_on]);
-		bin[storeId][productId].sort((a,b)=>a[1]>=b[1]);
 
     return bin;
 
-	}, {}); // data.reduce
+	}, {}); /* data.reduce: { 'store' : { 'product' : [ [quantity, date] ] } } */
 
-	console.timeEnd('reduce');
+	console.timeEnd('products_by_store');
 
-	// console.log(compareDate);
-	console.log(a['568']['999979']);
+	console.time('sales_by_store');
+	let sales_by_store =
+	_.chain(products_by_store)
+	.map((products_in_store, store) => {
+		let store_ids = [];
+
+		store_ids.push(store);
+
+		let sales_restocks = _.chain(products_in_store)
+			.map((entries, product_id) => {
+
+				let stock_diff = [];
+
+				_.chain(entries)
+				/* sort by entry date from earliest to latest */
+				.sortBy(entry=>entry[1])
+				/* extract the quantities, discard the dates */
+				.unzip()
+				.reduce((first,second)=>first)
+				/* calculate difference in stock between each pair of dates */
+				.foldr((right, left) => {
+					stock_diff.push(right - left);
+					return left;
+				})
+				.value();
+
+				/* add up sales & restocks */
+				let sales = stock_diff.reduce((sum,num)=> (num<0) ? (sum+num) : sum , 0);
+				let restocks = stock_diff.reduce((sum,num)=> (num>0) ? (sum+num) : sum , 0);
+
+				return [product_id, [sales , restocks]];
+			}) /* map((entries, id) */
+			.value();
+
+		return  [store, _.object(sales_restocks)] ;
+	}) /* map((products, store) */
+	.object()
+	.value();
+
+	console.timeEnd('sales_by_store');
+
+	console.log(sales_by_store['10']['999979']);
 
 })
 
