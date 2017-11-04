@@ -8,7 +8,8 @@ function load_inventory(file) {
 			try {
 				let data = _.chain(raw.split('\n'))
 					.filter(row => row.length > 1) /* remove empty lines */
-					.map(row => _.object(['productId','storeId','quantity','price','updated_on'], JSON.parse(row)))
+					// .map(row => _.object(['productId','storeId','quantity','price','updated_on'], JSON.parse(row)))
+					.map(row => JSON.parse(row))
 //		 			.tap(console.log)
 					.value();
 				resolve(data);
@@ -21,65 +22,44 @@ function load_inventory(file) {
 
 load_inventory('./inventories.csv')
 .then(data=>{
-	let products_by_store = _.chain(data)
-			.groupBy('storeId')
-			.value();
 
-	let all_stores = _.keys(products_by_store);
 
-	/* Returns the product with most quantity at a store */
-	//TODO: make this a local maximum, not global, by giving a time frame
-	let get_most_stocked = function(store_id) {
-		let products = products_by_store[store_id];
-		let most_stock = _.max(products, product=>product['quantity']);
-		return most_stock;
-	}
+	// console.time('groupBy');
+	//
+	// let products_by_store = _.chain(data)
+	// 		.groupBy('storeId')
+	// 		.value();
+	//
+	// console.timeEnd('groupBy');
 
-	let most_stocked = _.chain(all_stores)
-	.map(get_most_stocked)
-	.value();
+	console.time('reduce');
 
-	// most_stocked.map(product => console.log(product['product_id'] + ' @ ' + product['store_id']))
+	let a = data.reduce((bin, elm) => {
+		let storeId = elm[1],
+				productId = elm[0],
+				quantity = elm[2],
+				price = elm[3],
+				updated_on = elm[4];
 
-	/* Returns the inventory history of a product at a store */
-	let get_inventory_history = function (store_id, product_id) {
-		let products = products_by_store[store_id];
-		let inventory_history = _.chain(products)
-			.filter(product => product['productId'] === product_id)
-//			.map(product => _.pick(product, 'quantity', 'updated_on'))
-			.value();
+    if (bin[storeId] == undefined) {
+        bin[storeId] = {};
+    };
 
-		return inventory_history;
-	}
+    if (bin[storeId][productId] == undefined) {
+        bin[storeId][productId] = [];
+    };
 
-	let calculateSalesRestock = function(inventory_by_date) {
-		let sales_restock = []
-		inventory_by_date.reduce((a,b) => {sales_restock.push(b-a); return b;})
-		return sales_restock;
-	}
+    bin[storeId][productId].push([quantity, updated_on]);
+		bin[storeId][productId].sort((a,b)=>a[1]>=b[1]);
 
-	let most_stock_history = _.chain(all_stores)
-	                       .map(get_most_stocked)
-												 .map(product => get_inventory_history(product['storeId'],product['productId']))
-												 .filter(history => history.length > 1)
-												 .map(history => _.chain(history)
-												 									.map(product=> _.chain(product)
-																													.pick('quantity', 'updated_on')
-																													.value())
-																					.sortBy('updated_on')
-																					.map(product=> _.chain(product)
-																													.values()
-																													.value())
-																					.unzip()
-																					.value())
-												 .map(history => calculateSalesRestock(history[0]))
-												 .value();
-	console.log(most_stock_history);
+    return bin;
 
-	exports.ps = products_by_store;
-	exports.ss = all_stores;
-	exports._ = _;
+	}, {}); // data.reduce
 
+	console.timeEnd('reduce');
+
+	// console.log(compareDate);
+	console.log(a['568']['999979']);
 
 })
 
