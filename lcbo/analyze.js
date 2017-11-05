@@ -106,7 +106,7 @@ load_inventory('./inventories.csv')
 	});
 
 
-	stores.map(store => {
+	let report = stores.map(store => {
 		let store1 = _.indexOf(stores, store);
 		let products_store1 = sales_restocks_by_store[store1][0];
 		let sales_store1 = sales_restocks_by_store[store1][1];
@@ -114,9 +114,14 @@ load_inventory('./inventories.csv')
 
 		let most_restocked = _.max(restocks_store1);
 		let most_sold = _.min(sales_store1);
-		console.log( `Store ${store}: Most sold ${products_store1[_.indexOf(sales_store1, most_sold)]} (${most_sold} units); Most restocked: ${products_store1[_.indexOf(restocks_store1,_.max(restocks_store1))]} (${most_restocked} units)`);
-
+		return {store: store,
+						most_restocked: products_store1[_.indexOf(restocks_store1,most_restocked)],
+						most_sold: products_store1[_.indexOf(sales_store1, most_sold)],
+					  most_sold_count: most_sold,
+					  most_restocked_count: most_restocked};
 	});
+
+	console.log(_.groupBy(report,'most_restocked'));
 
 
 })
