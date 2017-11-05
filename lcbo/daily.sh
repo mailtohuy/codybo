@@ -2,7 +2,7 @@
 os=$(uname)
 
 #echo current date
-date
+TZ='America/Toronto' date
 
 # count lines and size of inventory before update
 
@@ -65,3 +65,6 @@ fi
 
 # display size of downloaded data
 echo "Mobile data used: $(( $after_size - $before_size )) bytes"
+
+#echo current date
+TZ='America/Toronto' date
