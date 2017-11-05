@@ -53,7 +53,7 @@ load_inventory('./inventories.csv')
 
     return bin;
 
-	}, {}); /* data.reduce: { 'store' : { 'product' : [ [quantity, date] ] } } */
+	}, {}); /* products_by_store: { 'store' : { 'product' : [ [quantity, date] ] } } */
 
 	console.timeEnd('products_by_store');
 
@@ -61,12 +61,9 @@ load_inventory('./inventories.csv')
 	let sales_by_store =
 	_.chain(products_by_store)
 	.map((products_in_store, store) => {
-		let store_ids = [];
-
-		store_ids.push(store);
 
 		let sales_restocks = _.chain(products_in_store)
-			.map((entries, product_id) => {
+			.map( function(entries, product_id) {
 
 				let stock_diff = [];
 
@@ -80,29 +77,46 @@ load_inventory('./inventories.csv')
 				.foldr((right, left) => {
 					stock_diff.push(right - left);
 					return left;
-				})
-				.value();
+				}).value();
 
 				/* add up sales & restocks */
 				let sales = stock_diff.reduce((sum,num)=> (num<0) ? (sum+num) : sum , 0);
 				let restocks = stock_diff.reduce((sum,num)=> (num>0) ? (sum+num) : sum , 0);
 
 				return [product_id, [sales , restocks]];
-			}) /* map((entries, id) */
-			.value();
+			}).value(); /* map((entries, id) */
 
 		return  [store, _.object(sales_restocks)] ;
-	}) /* map((products, store) */
+	}) /* map((products_in_store, store) */
 	.object()
-	.value();
+	.value(); /* sales_by_store: { 'store' : { 'product' : [sales, restocks]  } } */
 
 	console.timeEnd('sales_by_store');
 
-	console.log(sales_by_store['10']['999979']);
+	let stores = _.keys(sales_by_store);
+	let sales_restocks_by_store = stores.map(function(store_id) {
+		let products = _.keys(sales_by_store[store_id]);
+		let [ sales, restocks] = _.reduce(sales_by_store[store_id],
+			function(bin, product){
+				bin[0].push(product[0]);
+				bin[1].push(product[1]);
+				return bin;
+			},[[],[]]);
+		return [products, sales, restocks ];
+	});
+
+
+	stores.map(store => {
+		let store1 = _.indexOf(stores, store);
+		let products_store1 = sales_restocks_by_store[store1][0];
+		let sales_store1 = sales_restocks_by_store[store1][1];
+		let restocks_store1 = sales_restocks_by_store[store1][2];
+
+		let most_restocked = _.max(restocks_store1);
+		let most_sold = _.min(sales_store1);
+		console.log( `Store ${store}: Most sold ${products_store1[_.indexOf(sales_store1, most_sold)]} (${most_sold} units); Most restocked: ${products_store1[_.indexOf(restocks_store1,_.max(restocks_store1))]} (${most_restocked} units)`);
+
+	});
+
 
 })
-
-/*
-Done - 1. what are the most stocked products at store #?
-2. what products were sold yesterday at store #?
-*/
