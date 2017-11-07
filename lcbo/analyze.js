@@ -8,9 +8,7 @@ function load_inventory(file) {
 			try {
 				let data = _.chain(raw.split('\n'))
 					.filter(row => row.length > 1) /* remove empty lines */
-					// .map(row => _.object(['productId','storeId','quantity','price','updated_on'], JSON.parse(row)))
-					.map(row => JSON.parse(row))
-//		 			.tap(console.log)
+					.map(row => _.object(['product_id','store_id','quantity','price','updated_on'], JSON.parse(row)))
 					.value();
 				resolve(data);
 			} catch (e) {
@@ -20,40 +18,60 @@ function load_inventory(file) {
 	});
 } // end of load_inventory
 
+function group_products_by_store(data) {
+	/* Input: [ {product_id, store_id, quantity, updated_on, ...} ]
+	 * Output: { 'store_id' : { 'product_id' : [ [ quantity, updated_on ] ] } }
+	 */
+	 return data.reduce(function(bin, elm){
+
+		 let storeId = elm['store_id'],
+ 				 productId = elm['product_id'];
+
+     if (bin[storeId] == undefined)
+         bin[storeId] = {};
+
+     if (bin[storeId][productId] == undefined)
+         bin[storeId][productId] = [];
+
+     bin[storeId][productId].push([elm['quantity'], elm['updated_on']]);
+
+     return bin;
+
+ 		}, {});
+}
+
+function countSalesRestocks(entries) {
+	/*
+	* Input: [ [ quantity, updated_on ] ]
+	* Output: [ [ -sale1, -sale2 , ... ], [ +restock1, +restock2 ... ] ]
+	*/
+	let stock_diff = [];
+	
+	_.chain(entries)
+	/* sort by entry date from earliest to latest */
+	.sortBy(entry=>entry[1])
+	/* extract the quantities, discard the dates */
+	.unzip()
+	.reduce((first,second)=>first)
+	/* calculate difference in stock between each pair of dates */
+	.foldr((right, left) => {
+		stock_diff.push(right - left);
+		return left;
+	}).value();
+
+	/* add up sales & restocks */
+	let sales = stock_diff.reduce((sum,num)=> (num<0) ? (sum+num) : sum , 0);
+	let restocks = stock_diff.reduce((sum,num)=> (num>0) ? (sum+num) : sum , 0);
+	
+	return [sales , restocks];
+}
+
 load_inventory('./inventories.csv')
 .then(data=>{
 
-
-	// console.time('groupBy');
-	//
-	// let products_by_store = _.chain(data)
-	// 		.groupBy('storeId')
-	// 		.value();
-	//
-	// console.timeEnd('groupBy');
-
 	console.time('products_by_store');
 
-	let products_by_store = data.reduce((bin, elm) => {
-		let storeId = elm[1],
-				productId = elm[0],
-				quantity = elm[2],
-				price = elm[3],
-				updated_on = elm[4];
-
-    if (bin[storeId] == undefined) {
-        bin[storeId] = {};
-    };
-
-    if (bin[storeId][productId] == undefined) {
-        bin[storeId][productId] = [];
-    };
-
-    bin[storeId][productId].push([quantity, updated_on]);
-
-    return bin;
-
-	}, {}); /* products_by_store: { 'store' : { 'product' : [ [quantity, date] ] } } */
+	let products_by_store =  group_products_by_store(data);
 
 	console.timeEnd('products_by_store');
 
@@ -62,29 +80,12 @@ load_inventory('./inventories.csv')
 	_.chain(products_by_store)
 	.map((products_in_store, store) => {
 
-		let sales_restocks = _.chain(products_in_store)
+		let sales_restocks =
+		 _.chain(products_in_store)
 			.map( function(entries, product_id) {
-
-				let stock_diff = [];
-
-				_.chain(entries)
-				/* sort by entry date from earliest to latest */
-				.sortBy(entry=>entry[1])
-				/* extract the quantities, discard the dates */
-				.unzip()
-				.reduce((first,second)=>first)
-				/* calculate difference in stock between each pair of dates */
-				.foldr((right, left) => {
-					stock_diff.push(right - left);
-					return left;
-				}).value();
-
-				/* add up sales & restocks */
-				let sales = stock_diff.reduce((sum,num)=> (num<0) ? (sum+num) : sum , 0);
-				let restocks = stock_diff.reduce((sum,num)=> (num>0) ? (sum+num) : sum , 0);
-
+				let [sales , restocks] = countSalesRestocks(entries);
 				return [product_id, [sales , restocks]];
-			}).value(); /* map((entries, id) */
+			}).value();
 
 		return  [store, _.object(sales_restocks)] ;
 	}) /* map((products_in_store, store) */
