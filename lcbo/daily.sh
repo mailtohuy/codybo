@@ -1,10 +1,14 @@
 #!/bin/bash
-# edit PATH for cron job
-PATH=$PATH:/usr/local/bin:/opt/bitnami/nodejs/bin:/opt/bitnami/git/bin
 
+
+# edit PATH for cron job
+PATH=$PATH:/usr/local/bin:/opt/bitnami/nodejs/bin
+echo $PATH
+
+# Get OS name since stat syntax is different across Linux, Mac and Debian
 os=$(uname)
 
-#echo current date
+# Echo current date
 TZ='America/Toronto' date
 
 # count lines and size of inventory before update
@@ -21,7 +25,7 @@ fi
 cp inventories.csv inventories.csv.bk
 
 # update inventory
-node collect.js 
+node collect.js 2>&1
 
 # get size of inventory right after update to calculate size of downloaded data
 
@@ -31,8 +35,6 @@ elif [[ "$os" == "Darwin" ]]; then
 	after_size=$(stat -f '%z' inventories.csv 2>/dev/null)
 fi
 
-
-
 # remove duplicates from inventory
 sort inventories.csv|uniq > t.csv
 mv t.csv inventories.csv
@@ -41,22 +43,16 @@ mv t.csv inventories.csv
 after=$(wc -l inventories.csv)
 
 
-# commit the new inventory to github
+# compare inventory level
 if [ "$before" != "$after" ]; then
 		echo "No of products before update: $before"
 		echo "No of products after update: $after"
 		echo "Inventories updated!"
 
-		git add inventories.csv
-		git commit -m "[daily.sh] Updated inventories on $(TZ='America/Toronto' date)" 2>&1 >/dev/null
 		if [ $? -eq 0 ]
 		then
-			   echo "Inventories saved to github !"
-
-			   # delete the backup file
-		     rm -f inventories.csv.bk
-		else
-			   echo "Err: Inventories not saved to github !"
+		    # delete the backup file
+		    rm -f inventories.csv.bk
 		fi
 else
 		echo "No of products before update: $before"
