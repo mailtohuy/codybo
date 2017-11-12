@@ -1,4 +1,7 @@
 #!/bin/bash
+# edit PATH for cron job
+PATH=$PATH:/usr/local/bin:/opt/bitnami/nodejs/bin:/opt/bitnami/git/bin
+
 os=$(uname)
 
 #echo current date
@@ -18,7 +21,7 @@ fi
 cp inventories.csv inventories.csv.bk
 
 # update inventory
-node collect.js 2> /dev/null
+node collect.js 
 
 # get size of inventory right after update to calculate size of downloaded data
 
