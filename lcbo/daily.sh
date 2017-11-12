@@ -72,5 +72,3 @@ echo "Mobile data used: $(( $after_size - $before_size )) bytes"
 #echo current date
 TZ='America/Toronto' date
 
-# poll Dead Man Snitch to signal job run
-curl  https://nosnch.in/e53f513cb4
