@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd /home/mailtohuy/projects/codybo/lcbo
 
 # edit PATH for cron job
 PATH=$PATH:/usr/local/bin:/opt/bitnami/nodejs/bin
@@ -25,7 +26,7 @@ fi
 cp inventories.csv inventories.csv.bk
 
 # update inventory
-node collect.js 2>&1
+node collect.js > /dev/null
 
 # get size of inventory right after update to calculate size of downloaded data
 
