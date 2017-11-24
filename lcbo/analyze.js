@@ -68,7 +68,7 @@ function countSalesRestocks(entries) {
   return [sales , restocks];
 }
 
-let getProductInfo = _.memoize( id => _.clone(productInfo.filter(p => p['id'] === id) ) );
+let getProductInfo = _.memoize( id => _.clone(productInfo.filter(p => p['id'] === id)[0] ) );
 
 load_inventory('./inventories.csv')
 .then(data=>{
@@ -119,20 +119,20 @@ load_inventory('./inventories.csv')
     let restocks_store1 = sales_restocks_by_store[store1][2];
     let most_restocked = _.max(restocks_store1);
     let most_restocked_id = products_store1[_.indexOf(restocks_store1,most_restocked)];
+    let most_restocked_info = _.pick(_.defaults(getProductInfo(most_restocked_id), {"count": most_restocked}), ["name","price_in_cents" ,"image_url" ]);
 
     let most_sold = _.min(sales_store1);
     let most_sold_id = products_store1[_.indexOf(sales_store1, most_sold)];
-
-    return {store: store,
-            most_restocked: most_restocked_id,
-            most_restocked_info: JSON.stringify(getProductInfo(most_restocked_id)),
-            most_sold: most_sold_id,
-            most_sold_info: JSON.stringify(getProductInfo(most_sold_id)),
-            most_sold_count: most_sold,
-            most_restocked_count: most_restocked};
+    let most_sold_info = _.pick(_.defaults(getProductInfo(most_sold_id), {"count": most_sold}), ["name","price_in_cents" ,"image_url" ]);
+    
+    return {
+            "store" : store,
+            "most_restocked" : JSON.stringify(most_restocked_info),
+            "most_sold" : JSON.stringify(most_sold_info)
+          };
   });
 
-  console.log(_.groupBy(report,'most_restocked'));
+  console.log( report );
 
 
 })
