@@ -17,7 +17,8 @@
     "express": "^4.9.8",
     "hget": "3.0.1",
     "mongoose": "^4.5.8",
-    "request-promise": "4.1.1"
+    "request-promise": "4.1.1",
+    "underscore": "^1.8.3" 
   },
   "repository": {
     "type": "git",

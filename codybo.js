@@ -1,4 +1,6 @@
-var rp = require('request-promise');
+const 
+	rp = require('request-promise'),
+	_ = require('underscore');
 var apiKey = 'MDpkNzE1NTI2ZS0xOWUyLTExZTYtOGVlMi03N2U2MGFjMTAzMjY6QVdzWGpYUFQweW9uejFmRUZjYkNzcVhicE5UWktXQWdna0cz'
 
 
@@ -7,7 +9,9 @@ function getJSON(url) {
 	.then((html) => JSON.parse(html));
 }
 
-function sendLcboQuery(endpoint, query) {
+const sendLcboQuery = _.memoize(__sendLcboQuery, (endpoint, query) => endpoint + '_' + query )
+
+function __sendLcboQuery(endpoint, query) {
 	/*
 	* Output: [] on failure, [{}] on success
 	*/
@@ -55,7 +59,7 @@ module.exports.getStoresNearAddress = function(addr) {
 	return sendLcboQuery('stores', `geo=${encodeURIComponent(addr)}&per_page=10`);
 }
 
-module.exports.getSalesAtStore = function (storeId) {
+module.exports.getSalesAtStore = function(storeId) {
 
 	return sendLcboQuery(`stores/${storeId}/products`, 'where=has_limited_time_offer&per_page=100')
 	.then(function(json){
@@ -81,8 +85,7 @@ module.exports.getSalesAtStore = function (storeId) {
 			return jsons.reduce(function (x,y) { 
 				return {result : (x.result).concat(y.result) };
 			});
-		})
-		.then((a) => products.concat(a.result))
+		}).then(all => products.concat(all.result) )
 	});
 };
 
