@@ -1,15 +1,17 @@
-var express = require('express');
-var rp = require('request-promise');
-var hget = require('hget');
-var bodyParser = require("body-parser");
-var lcbo = require('./codybo.js');
-var gm = require('./groupme.js');
+const 
+	express = require('express'),
+	rp = require('request-promise'),
+	hget = require('hget'),
+	bodyParser = require("body-parser"),
+	lcbo = require('./codybo.js'),
+	_ = require('underscore'),
+	gm = require('./groupme.js');
 
 var server = express();
 
 console.log('starting server');
 
-server.set('PORT', (process.env.PORT || 5050));
+server.set('PORT', (process.env.PORT || 4200));
 
 server.use(express.static(__dirname + '/public'));
 
@@ -51,7 +53,7 @@ server.get("/echo/:text", function(req, res) {
 
 server.get("/lcbo/:storeId", function(req,res) {
 	lcbo.getSalesAtStore(req.params.storeId)
-	.then((json) => res.send(json));
+	.then(json => 	res.send(_.chain(json).sortBy(p=>p.secondary_category).value())  );
 });
 
 server.get("/lcbo-nearby", function(req,res) {
