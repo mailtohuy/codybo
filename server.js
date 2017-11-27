@@ -55,7 +55,7 @@ server.get("/lcbo/:storeId", function(req,res) {
 	lcbo.getSalesAtStore(req.params.storeId)
 	.then(json => {	
 		// sort result by secondary_category, then by price
-		let sorted = 
+		var sorted = 
 			_.chain(json)
 				.groupBy(p=>p.secondary_category)
 				.map((g,k)=>[k,_.chain(g).sortBy(p=>p.price_in_cents).value()])
