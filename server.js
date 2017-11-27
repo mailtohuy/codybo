@@ -53,7 +53,26 @@ server.get("/echo/:text", function(req, res) {
 
 server.get("/lcbo/:storeId", function(req,res) {
 	lcbo.getSalesAtStore(req.params.storeId)
-	.then(json => 	res.send(_.chain(json).sortBy(p=>p.secondary_category).value())  );
+	.then(json => {	
+		// sort result by secondary_category, then by price
+		let sorted = 
+			_.chain(json)
+				.groupBy(p=>p.secondary_category)
+				.map((g,k)=>[k,_.chain(g).sortBy(p=>p.price_in_cents).value()])
+				.sortBy(([k,v])=>k)
+				.map(([k,v])=>v)
+				.flatten()
+				.map(product => {
+					// transform some value
+					product.price_in_cents /= 100.0;
+					product.limited_time_offer_savings_in_cents /= 100.0;
+					product.alcohol_content /= 100;
+					return product;
+				})
+				.value();
+		
+		res.send(sorted);  
+	});
 });
 
 server.get("/lcbo-nearby", function(req,res) {
