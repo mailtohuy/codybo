@@ -2,122 +2,103 @@
 <html>
 
 <head>
-	<meta charset="utf-8">
-	<!-- Bootstrap -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-	 crossorigin="anonymous">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-	 crossorigin="anonymous">
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	 crossorigin="anonymous"></script>
+  <meta charset="utf-8">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+    crossorigin="anonymous">
+
+  <!-- Angular -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+  <script type="text/javascript">
+    angular.module('myApp', [])
+      .controller('StoreController', function ($http) {
+        var storeCtlr = this;
+        var base_url = window.origin;
+
+        storeCtlr.address = "";
+        storeCtlr.stores = []; // stores -> [{id:411, name, ...}, {id:123,...}]
+        storeCtlr.sales = {}; // sales -> {411 : [{productId,...}], 123: [...] }
+        storeCtlr.currentStore = 1;
 
 
-	<!-- Angular -->
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-	<script type="text/javascript">
-		angular.module('myApp', [])
-			.controller('StoreController', function ($http) {
-				var storeCtlr = this;
-				var base_url = window.origin;
+        storeCtlr.getStores = function () {
+          $http.get(base_url + '/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
+            .then(function (res) {
+              storeCtlr.stores = res.data; // auto-converted to JSON object
+            }, function (err) {
+              console.log('Error while loading getStores');
+            }); // then
+        };
 
-				storeCtlr.address = "";
-				storeCtlr.stores = []; // stores -> [{id:411, name, ...}, {id:123,...}]
-				storeCtlr.sales = {}; // sales -> {411 : [{productId,...}], 123: [...] }
-				storeCtlr.currentStore = 1;
+        storeCtlr.getSales = function (storeId) {
+          if (storeCtlr.sales[storeId] == undefined) {
+            $http.get(base_url + '/lcbo/' + storeId)
+              .then(function (res) {
+                storeCtlr.sales[storeId] = res.data;
 
-
-				storeCtlr.getStores = function () {
-					$http.get(base_url + '/lcbo-nearby?geo=' + encodeURIComponent(storeCtlr.address))
-						.then(function (res) {
-							storeCtlr.stores = res.data; // auto-converted to JSON object
-						}, function (err) {
-							console.log('Error while loading getStores');
-						}); // then
-				};
-
-				storeCtlr.getSales = function (storeId) {
-					if (storeCtlr.sales[storeId] == undefined) {
-						$http.get(base_url + '/lcbo/' + storeId)
-							.then(function (res) {
-								storeCtlr.sales[storeId] = res.data;
-
-							}, function (err) {
-								console.log('Error while loading getSales');
-							}); // then				
-					}
-				};
-			}); // StoreController
-	</script>
+              }, function (err) {
+                console.log('Error while loading getSales');
+              }); // then				
+          }
+        };
+      }); // StoreController
+  </script>
 
 </head>
 
 <body ng-app="myApp">
-	<div ng-controller="StoreController as mc">
-		<div class="container">
-			<div class="input-group">
-				<input class="form-control" type="text" ng-model="mc.address" placeholder="Postal code or address">
-				<button type="button" class="btn btn-default" ng-click="mc.getStores()">Find nearest store</button>
-			</div>
-		</div>
+  <div class="container" ng-controller="StoreController as mc">
 
-		<ul class="list-group">
-			<li class="list-group-item" ng-repeat="s in mc.stores">
-				<div>
-					<button class="btn btn-default" ng-click="mc.getSales(s.id)">{{s.name}}</button>
-					{{s.address_line_1}}, {{s.city}}, {{s.postal_code}}
-				</div>
-
-				<div id="sales_{{s.id}}" ng-hide="mc.sales[s.id] == undefined">
-					<table class="table table-hover table-striped table-responsive">
-						<tr>
-							<th>Type</th>
-							<th> Name </th>
-							<th> Price </th>
-							<th> Quantity </th>
-							<th> Sugar (g/l)</th>
-							<th> Alcohol (%)</th>
-						</tr>
-
-						<tr ng-repeat="item in mc.sales[s.id]">
-							<td>{{item.secondary_category}}</td>
-							<td>{{item.name}}</td>
-							<td>${{item.price_in_cents/100.0}} (save ${{item.limited_time_offer_savings_in_cents/100.0}})</td>
-							<td>{{item.quantity}}</td>
-							<td>{{item.sugar_in_grams_per_liter}}</td>
-							<td>{{item.alcohol_content/100.0}}</td>
-						</tr>
-					</table>
-				</div>
-			</li>
-		</ul>
-	</div>
-
-
-	<!--
-    <div id="geolocator">
-		<p>10 stores nearest to your current position</p>
-		<img src="loading.gif" id="spin">
-		<div id="url" style="display: none;"> </div>
-		<div id="geo"> </div>   
-		</script> 
-		<script >     
-			navigator.geolocation.getCurrentPosition(function(position) {
-  				url = "https://codybo.herokuapp.com/lcbo-nearby?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
-  				document.getElementById("url").innerText = url;
-  				$.getJSON(url).then(function(data) {
-  					data.forEach(function(store) {
-  						var newP = document.createElement("p");
-  						newP.innerText = store.tags;
-  						document.getElementById("geo").appendChild(newP);
-  						document.getElementById("spin").style.display = "none";
-  					})
-            		
-        		});	
-			});
-		</script>    
+    <div class="jumbotron">
+      <h1> 👀  💗 🍷 </h1>
+      <div class="input-group input-group-lg">
+          <span class="input-group-addon" >Find the nearest LCBO stores to</span>
+          <input class="form-control" type="text" ng-model="mc.address" placeholder="Postal code or address" >
+          <span class="input-group-addon">
+            <a class="btn btn-primary btn-lg" ng-click="mc.getStores()" role="button">Go</a>
+          </span>
+        </div>
     </div>
--->
+
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="store in mc.stores">
+        <div>
+          <button class="btn btn-default" ng-click="mc.getSales(store.id)">{{store.name}}</button>
+          {{store.address_line_1}}, {{store.city}}, {{store.postal_code}}
+        </div>
+
+        <div id="sales_{{store.id}}" ng-hide="mc.sales[store.id] == undefined">
+          <table class="table table-hover table-striped table-responsive">
+            <tr class="row">
+              <th class="col-xs-1">Type</th>
+              <th class="col-xs-4">Name</th>
+              <th class="col-xs-2">Price</th>
+              <th class="col-xs-1">Quantity</th>
+              <th class="col-xs-1">Sugar (g/l)</th>
+              <th class="col-xs-1">Alcohol (%)</th>
+            </tr>
+
+            <tr class="row" ng-repeat="item in mc.sales[store.id]">
+              <td class="col-xs-1">{{item.secondary_category}}</td>
+              <td class="col-xs-4">{{item.name}}</td>
+              <td class="col-xs-2">${{item.price_in_cents/100.0}} (save ${{item.limited_time_offer_savings_in_cents/100.0}})</td>
+              <td class="col-xs-1">{{item.quantity}}</td>
+              <td class="col-xs-1">{{item.sugar_in_grams_per_liter}}</td>
+              <td class="col-xs-1">{{item.alcohol_content/100.0}}</td>
+            </tr>
+          </table>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
 </body>
 
 </html>
