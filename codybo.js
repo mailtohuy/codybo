@@ -16,7 +16,7 @@ function __sendLcboQuery(endpoint, query) {
 	const apiKey = 'MDpkNzE1NTI2ZS0xOWUyLTExZTYtOGVlMi03N2U2MGFjMTAzMjY6QVdzWGpYUFQweW9uejFmRUZjYkNzcVhicE5UWktXQWdna0cz';
 	var url = 'https://lcboapi.com/' +  endpoint + '?access_key=' + apiKey + '&' + query;
 
-	console.log(`sendLcboQuery: ${url}`);
+	console.log(`sendLcboQuery: ${endpoint} ${query}`);
 
 	return getJSON(url)	
 	.then(function(json){

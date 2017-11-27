@@ -62,6 +62,7 @@ server.get("/lcbo/:storeId", function(req,res) {
 				.sortBy(([k,v])=>k)
 				.map(([k,v])=>v)
 				.flatten()
+				.filter(p=>p.quantity > 0)
 				.value();
 		
 		res.send(sorted);  
