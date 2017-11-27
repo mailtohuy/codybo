@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A Node.js app to browse LCBO products",
   "engines": {
-    "node": "4.4.5"
+    "node": "6.11.3"
   },
   "main": "server.js",
   "scripts": {
