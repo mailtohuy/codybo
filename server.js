@@ -62,13 +62,6 @@ server.get("/lcbo/:storeId", function(req,res) {
 				.sortBy(([k,v])=>k)
 				.map(([k,v])=>v)
 				.flatten()
-				.map(product => {
-					// transform some value
-					product.price_in_cents /= 100.0;
-					product.limited_time_offer_savings_in_cents /= 100.0;
-					product.alcohol_content /= 100;
-					return product;
-				})
 				.value();
 		
 		res.send(sorted);  

@@ -69,7 +69,7 @@
 				</div>
 
 				<div id="sales_{{s.id}}" ng-hide="mc.sales[s.id] == undefined">
-					<table class="table table-hover table-striped">
+					<table class="table table-hover table-striped table-responsive">
 						<tr>
 							<th>Type</th>
 							<th> Name </th>
@@ -82,10 +82,10 @@
 						<tr ng-repeat="item in mc.sales[s.id]">
 							<td>{{item.secondary_category}}</td>
 							<td>{{item.name}}</td>
-							<td>${{item.price_in_cents}} (save ${{item.limited_time_offer_savings_in_cents}})</td>
+							<td>${{item.price_in_cents/100.0}} (save ${{item.limited_time_offer_savings_in_cents/100.0}})</td>
 							<td>{{item.quantity}}</td>
 							<td>{{item.sugar_in_grams_per_liter}}</td>
-							<td>{{item.alcohol_content}}</td>
+							<td>{{item.alcohol_content/100.0}}</td>
 						</tr>
 					</table>
 				</div>
