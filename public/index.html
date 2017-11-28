@@ -80,24 +80,24 @@
           </div>
         </div>
 
-        <div class="table-responsive" id="sales_{{store.id}}" ng-hide="mc.sales[store.id] == undefined">
+        <div id="sales_{{store.id}}" ng-hide="mc.sales[store.id] == undefined">
           <table class="table table-hover table-striped">
             <tr class="row">
-              <th class="col-xs-1">Type</th>
-              <th class="col-xs-4">Name</th>
-              <th class="col-xs-2">Price</th>
-              <th class="col-xs-1">Quantity</th>
-              <th class="col-xs-1">Sugar (g/l)</th>
-              <th class="col-xs-1">Alcohol (%)</th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th class="hidden-xs">Sugar (g/l)</th>
+              <th class="hidden-xs">Alcohol (%)</th>
             </tr>
 
             <tr class="row" ng-repeat="item in mc.sales[store.id]">
-              <td class="col-xs-1">{{item.secondary_category}}</td>
-              <td class="col-xs-4">{{item.name}}</td>
-              <td class="col-xs-2">${{item.price_in_cents/100.0}} (save ${{item.limited_time_offer_savings_in_cents/100.0}})</td>
-              <td class="col-xs-1">{{item.quantity}}</td>
-              <td class="col-xs-1">{{item.sugar_in_grams_per_liter}}</td>
-              <td class="col-xs-1">{{item.alcohol_content/100.0}}</td>
+              <td>{{item.secondary_category}}</td>
+              <td>{{item.name}}</td>
+              <td>${{item.price_in_cents/100.0}} (save ${{item.limited_time_offer_savings_in_cents/100.0}})</td>
+              <td>{{item.quantity}}</td>
+              <td class="hidden-xs">{{item.sugar_in_grams_per_liter}}</td>
+              <td class="hidden-xs">{{item.alcohol_content/100.0}}</td>
             </tr>
           </table>
         </div>
