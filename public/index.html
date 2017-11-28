@@ -72,16 +72,16 @@
     <ul class="list-group">
       <li class="list-group-item" ng-repeat="store in mc.stores">
         <div class="row">
-          <div class="col-xs-5">
+          <div class="col-xs-6">
             <button data-toggle="collapse" href="#sales_{{store.id}}" class="btn btn-success btn-block" ng-click="mc.getSales(store.id)">{{store.name}}</button>
           </div>
-          <div class="col-xs-7">
+          <div class="col-xs-6">
             {{store.address_line_1}}, {{store.city}}, {{store.postal_code}}
           </div>
         </div>
 
-        <div id="sales_{{store.id}}" ng-hide="mc.sales[store.id] == undefined">
-          <table class="table table-hover table-striped table-responsive">
+        <div class="table-responsive" id="sales_{{store.id}}" ng-hide="mc.sales[store.id] == undefined">
+          <table class="table table-hover table-striped">
             <tr class="row">
               <th class="col-xs-1">Type</th>
               <th class="col-xs-4">Name</th>
