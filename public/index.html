@@ -52,21 +52,31 @@
   <div class="container" ng-controller="StoreController as mc">
 
     <div class="jumbotron">
-      <h1> 👀  💗 🍷 </h1>
-      <div class="input-group input-group-lg">
-          <span class="input-group-addon" >Find the nearest LCBO stores to</span>
-          <input class="form-control" type="text" ng-model="mc.address" placeholder="Postal code or address" >
-          <span class="input-group-addon">
-            <a class="btn btn-primary btn-lg" ng-click="mc.getStores()" role="button">Go</a>
-          </span>
+      <div class="well well-lg">
+        <h1 class="text-center"> 👀 💗 🍷 </h1>
+      </div>
+      <div class="row">
+        <div class="col-xs-7">
+          <div class="input-group input-group-lg">
+            <span class="input-group-addon glyphicon glyphicon-home"></span>
+            <input class="form-control" type="text" ng-model="mc.address" placeholder="Postal code or address">
+          </div>
         </div>
+        <div class="col-xs-1">
+          <a class="btn btn-primary btn-lg" ng-click="mc.getStores()" role="button">Find nearest stores</a>
+        </div>
+      </div>
     </div>
 
     <ul class="list-group">
       <li class="list-group-item" ng-repeat="store in mc.stores">
-        <div>
-          <button class="btn btn-default" ng-click="mc.getSales(store.id)">{{store.name}}</button>
-          {{store.address_line_1}}, {{store.city}}, {{store.postal_code}}
+        <div class="row">
+          <div class="col-xs-5">
+            <button data-toggle="collapse" href="#sales_{{store.id}}" class="btn btn-success btn-block" ng-click="mc.getSales(store.id)">{{store.name}}</button>
+          </div>
+          <div class="col-xs-7">
+            {{store.address_line_1}}, {{store.city}}, {{store.postal_code}}
+          </div>
         </div>
 
         <div id="sales_{{store.id}}" ng-hide="mc.sales[store.id] == undefined">
@@ -90,6 +100,7 @@
             </tr>
           </table>
         </div>
+
       </li>
     </ul>
   </div>
