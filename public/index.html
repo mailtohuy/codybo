@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
     crossorigin="anonymous">
@@ -56,14 +57,14 @@
         <h1 class="text-center"> 👀 💗 🍷 </h1>
       </div>
       <div class="row">
-        <div class="col-xs-7">
-          <div class="input-group input-group-lg">
+        <div class="col-xs-8">
+          <div class="input-group">
             <span class="input-group-addon glyphicon glyphicon-home"></span>
             <input class="form-control" type="text" ng-model="mc.address" placeholder="Postal code or address">
           </div>
         </div>
-        <div class="col-xs-1">
-          <a class="btn btn-primary btn-lg" ng-click="mc.getStores()" role="button">Find nearest stores</a>
+        <div class="col-xs-4">
+          <a class="btn btn-primary btn-block" ng-click="mc.getStores()" role="button">Find nearest stores</a>
         </div>
       </div>
     </div>
