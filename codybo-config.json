@@ -1,0 +1,18 @@
+{
+  "API_KEY" : "MDpkNzE1NTI2ZS0xOWUyLTExZTYtOGVlMi03N2U2MGFjMTAzMjY6QVdzWGpYUFQweW9uejFmRUZjYkNzcVhicE5UWktXQWdna0cz",
+	"STORE_FIELDS" : [
+		"id", "name" 
+		, "address_line_1", "city", "postal_code", "telephone"
+		, "latitude", "longitude"
+		, "monday_open" , "monday_close"
+		, "tuesday_open" , "tuesday_close"
+		, "wednesday_open" , "wednesday_close"
+		, "thursday_open" , "thursday_close"
+		, "friday_open" , "friday_close"
+		, "saturday_open" , "saturday_close"
+		, "sunday_open" , "sunday_close" ],
+	"PRODUCT_FIELDS" : ["id", "name", "image_url"
+		, "quantity", "secondary_category"
+		, "price_in_cents", "limited_time_offer_savings_in_cents"
+		, "alcohol_content", "sugar_in_grams_per_liter"]
+}

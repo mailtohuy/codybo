@@ -53,49 +53,14 @@ server.get("/echo/:text", function (req, res) {
 
 server.get("/lcbo/:storeId", function (req, res) {
 	lcbo.getSalesAtStore(req.params.storeId)
-		.then(json => {
-			// sort result by secondary_category, then by price
-			let fields_to_keep = ['id', 'name', 'secondary_category', 'price_in_cents', 'quantity',
-				'limited_time_offer_savings_in_cents', 'alcohol_content', 'sugar_in_grams_per_liter', 'image_url'];
-			let sorted =
-				_.chain(json)
-					.map(p => _.chain(p).pick(fields_to_keep).value())
-					.groupBy(p => p.secondary_category)
-					.map((g, k) => [k, _.chain(g).sortBy(p => p.price_in_cents).value()])
-					.sortBy(([k, v]) => k)
-					.map(([k, v]) => v)
-					.flatten()
-					.filter(p => p.quantity > 0)
-					.map(p => {
-						p['secondary_category'] = p['secondary_category'].replace(/(\/.*$)/g, '');
-						p['price_in_cents'] = p['price_in_cents'] / 100.0;
-						p['limited_time_offer_savings_in_cents'] = p['limited_time_offer_savings_in_cents'] / 100.0;
-
-						if (p['alcohol_content']) {
-							p['alcohol_content'] = p['alcohol_content'] / 100.0;
-							p['name'] = p['name'] + ` (${p['alcohol_content']} %)` ;
-						}
-
-						if (!p['image_url']) {
-							p['image_url'] = 'https://placeholdit.co//i/100x100?&bg=ffffff&fc=2a2a2a&text=No%20image';
-						}
-
-						if (!p['sugar_in_grams_per_liter']) {
-							p['sugar_in_grams_per_liter'] = '--';
-						}
-
-						return p;
-					})
-					.value();
-
-			res.send(sorted);
-		});
+		.then(json => res.send(json));
 });
 
 server.get("/lcbo-nearby", function (req, res) {
 	var p;
 	if (req.query['geo'] != undefined) {
 		p = lcbo.getStoresNearAddress(req.query.geo);
+		res.cookie('loc', req.query['geo']);
 	} else {
 		p = lcbo.getStoresNearby(req.query.lat, req.query.lon);
 	}
