@@ -103,18 +103,18 @@
                         <h4 class="modal-title">{{item.name}}</h4>
                       </div>
                       <div class="modal-body">
-                        <p>Sugar: {{item.sugar_in_grams_per_liter ? item.sugar_in_grams_per_liter : 0 }} g/l</p>
-                        <p>Alcohol: {{item.alcohol_content/100.0}} %</p>
-                        <img class="img-responsive" src="{{item.image_url ? item.image_url : ''}}" />
+                        <p>Sugar: {{item.sugar_in_grams_per_liter}} g/l</p>
+                        <p>Alcohol: {{item.alcohol_content}} %</p>
+                        <img class="img-responsive" src="{{item.image_url}}" />
                       </div>
                     </div>
                   </div>
                 </div>
               </td>
-              <td>${{item.price_in_cents/100.0}} (save ${{item.limited_time_offer_savings_in_cents/100.0}})</td>
+              <td>${{item.price_in_cents}} (save ${{item.limited_time_offer_savings_in_cents}})</td>
               <td>{{item.quantity}}</td>
               <td class="hidden-xs">{{item.sugar_in_grams_per_liter}}</td>
-              <td class="hidden-xs">{{item.alcohol_content/100.0}}</td>
+              <td class="hidden-xs">{{item.alcohol_content}}</td>
             </tr>
           </table>
         </div>

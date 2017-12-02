@@ -1,6 +1,6 @@
 const 
 	rp = require('request-promise'),
-	_ = require('underscore');
+	_ = require('lodash');
 
 function getJSON(url) {
 	return rp(url)
