@@ -81,7 +81,7 @@ server.get("/lcbo/:storeId", function (req, res) {
 						}
 
 						if (!p['sugar_in_grams_per_liter']) {
-							p['sugar_in_grams_per_liter'] = 'unknown';
+							p['sugar_in_grams_per_liter'] = '--';
 						}
 
 						return p;
