@@ -76,7 +76,9 @@
             <button data-toggle="collapse" href="#sales_{{store.id}}" class="btn btn-success btn-block" ng-click="mc.getSales(store.id)">{{store.name}}</button>
           </div>
           <div class="col-xs-6">
-            {{store.address_line_1}}, {{store.city}}, {{store.postal_code}}
+            <p>{{store.address}}</p> 
+            <p>{{store.telephone}}</p>
+            <p>{{store.today_hour}}</p>
           </div>
         </div>
 

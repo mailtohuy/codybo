@@ -9,9 +9,13 @@ module.exports = {
 
 const
 	rp = require('request-promise'),
-	_ = require('lodash');
+	_ = require('lodash'),
+	config = require('./codybo-config.json');
 
-const config = require('./codybo-config.json');
+const 
+	DAY_OF_WEEK =	['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+	DAY_OPENS = DAY_OF_WEEK.map(day => day + '_open'),
+	DAY_CLOSES = DAY_OF_WEEK.map(day => day + '_close');
 
 function getJSON(url) {
 	return rp(url)
@@ -65,11 +69,26 @@ function getStoresNearby(lat, lon) {
 
 function getStoresNearAddress(addr) {
 	return sendLcboQuery('stores', `geo=${encodeURIComponent(addr)}&per_page=10`)
-		.then(stores => {
-			let retval = stores.map(store => _.pick(store, config.STORE_FIELDS));
-			// debugger;
-			return retval;
-		});
+		.then(stores => stores.map(store => {
+			let 
+				day = (new Date).getDay(),
+				today = DAY_OF_WEEK[day],
+				today_open = store[DAY_OPENS[day]] / 60,
+				today_close = (store[DAY_CLOSES[day]] / 60) - 12;
+
+			let obj = _.chain(store)
+			.pick(config.STORE_FIELDS)
+			.defaults({ 
+				'address': `${store.address_line_1}, ${store.city}, ${store.postal_code}`,
+				'today_hour' : `${today}: ${today_open} am - ${today_close} pm`
+			})
+			.pick('id', 'name', 'address', 'latitude', 'longitude', 'telephone', 'today_hour')
+			.value();
+			console.log(obj);
+			debugger;
+			return obj;
+		}));
+			
 }
 
 function getSalesAtStore(storeId) {
