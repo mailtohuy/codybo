@@ -25,7 +25,7 @@
 
 
         storeCtlr.getStores = function () {
-          let url = `${base_url}/lcbo-nearby?geo=${encodeURIComponent(storeCtlr.address)}&day=${(new Date).getDay()}`;
+          let url = `${base_url}/lcbo-near{encodeURIComponent(storeCtlr.address)}&day=${(new Date).getDay()}`;
           $http.get(url)
             .then(function (res) {
               storeCtlr.stores = res.data; // auto-converted to JSON object
