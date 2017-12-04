@@ -67,12 +67,12 @@ function getStoresNearby(lat, lon) {
 	return sendLcboQuery('stores', `lat=${lat}&lon=${lon}&per_page=10`);
 };
 
-function getStoresNearAddress(addr) {
+function getStoresNearAddress(addr, day) {
 	return sendLcboQuery('stores', `geo=${encodeURIComponent(addr)}&per_page=10`)
 		.then(stores => stores.map(store => {
-			process.env.TZ = 'America/Toronto';
+			// process.env.TZ = 'America/Toronto';
 			let 
-				day = (new Date).getDay(),
+				// day = (new Date).getDay(),
 				today = DAY_OF_WEEK[day],
 				today_open = store[DAY_OPENS[day]] / 60,
 				today_close = (store[DAY_CLOSES[day]] / 60) - 12;

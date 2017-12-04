@@ -59,7 +59,7 @@ server.get("/lcbo/:storeId", function (req, res) {
 server.get("/lcbo-nearby", function (req, res) {
 	var p;
 	if (req.query['geo'] != undefined) {
-		p = lcbo.getStoresNearAddress(req.query.geo);
+		p = lcbo.getStoresNearAddress(req.query.geo, req.query['day']);
 		res.cookie('loc', req.query['geo']);
 	} else {
 		p = lcbo.getStoresNearby(req.query.lat, req.query.lon);
