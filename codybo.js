@@ -70,6 +70,7 @@ function getStoresNearby(lat, lon) {
 function getStoresNearAddress(addr) {
 	return sendLcboQuery('stores', `geo=${encodeURIComponent(addr)}&per_page=10`)
 		.then(stores => stores.map(store => {
+			process.env.TZ = 'America/Toronto';
 			let 
 				day = (new Date).getDay(),
 				today = DAY_OF_WEEK[day],
@@ -84,7 +85,7 @@ function getStoresNearAddress(addr) {
 			})
 			.pick('id', 'name', 'address', 'latitude', 'longitude', 'telephone', 'today_hour')
 			.value();
-			console.log(obj);
+			// console.log(obj);
 			debugger;
 			return obj;
 		}));
